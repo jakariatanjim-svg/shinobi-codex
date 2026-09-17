@@ -191,14 +191,13 @@ export function CharactersView({ characters, powerById, filter, onChange, onOpen
                 onClick={() => setFacet(dimension, option.value === activeValue ? undefined : option.value)}
                 title={`${option.value} — ${option.count} shinobi`}
               >
-                {shortLabel(option.value)}
+                {shorten(option.value)}
                 <span className="tabular opacity-60">{option.count}</span>
               </Chip>
             );
           })}
         </div>
 
-        {/* ------------------------------------------------ themed category banner */}
         <div
           key={`${dimension}-${activeValue ?? "all"}`}
           className="animate-rise relative mt-4 overflow-hidden rounded-2xl border p-5"
@@ -213,21 +212,22 @@ export function CharactersView({ characters, powerById, filter, onChange, onOpen
           />
           <div className="relative flex flex-wrap items-start justify-between gap-4">
             <div>
-              <p className="font-display text-[0.62rem] font-semibold uppercase tracking-[0.4em]" style={{ color: theme.accent }}>
-                {DIMENSIONS.find((entry) => entry.id === dimension)?.label}
+              <p
+                className="font-display text-[0.62rem] font-semibold uppercase tracking-[0.4em]"
+                style={{ color: theme.accent }}
+              >
+                {DIMENSIONS.find((item) => item.id === dimension)?.label}
               </p>
               <h2 className="font-display text-2xl font-bold uppercase tracking-[0.06em] text-white sm:text-3xl">
                 {activeValue ?? "Every recorded shinobi"}
               </h2>
-              <p className="mt-1 max-w-xl text-sm text-slate-400">
-                {banner.summary}
-              </p>
+              <p className="mt-1 max-w-xl text-sm text-slate-400">{banner.summary}</p>
             </div>
             <div className="flex flex-wrap gap-2">
-              <StatBox label="Shinobi" value={formatNumber(results.length)} accent={theme.accent} />
-              <StatBox label="Avg index" value={String(banner.average)} accent={theme.accent} />
-              <StatBox label="Clans" value={String(banner.clans)} accent={theme.accent} />
-              <StatBox label="Villages" value={String(banner.villages)} accent={theme.accent} />
+              <MiniStat label="Shinobi" value={formatNumber(results.length)} accent={theme.accent} />
+              <MiniStat label="Avg index" value={String(banner.average)} accent={theme.accent} />
+              <MiniStat label="Clans" value={String(banner.clans)} accent={theme.accent} />
+              <MiniStat label="Villages" value={String(banner.villages)} accent={theme.accent} />
             </div>
           </div>
 
@@ -270,7 +270,6 @@ export function CharactersView({ characters, powerById, filter, onChange, onOpen
           )}
         </div>
 
-        {/* ------------------------------------------------ toolbar */}
         <div className="mt-5 flex flex-wrap items-center gap-3">
           <p className="text-xs uppercase tracking-[0.24em] text-slate-500">
             <span className="tabular text-white">{formatNumber(results.length)}</span> results
@@ -298,13 +297,12 @@ export function CharactersView({ characters, powerById, filter, onChange, onOpen
               .filter(([, value]) => Boolean(value))
               .map(([key, value]) => (
                 <Chip key={key} active onClick={() => setFacet(key as Dimension, undefined)}>
-                  {shortLabel(String(value))} ✕
+                  {shorten(String(value))} ✕
                 </Chip>
               ))}
           </div>
         )}
 
-        {/* ------------------------------------------------ grid */}
         {results.length === 0 ? (
           <div className="mt-6">
             <EmptyState title="No shinobi match this seal" hint="Try clearing a filter or lowering the chakra index." />
@@ -343,15 +341,11 @@ export function CharactersView({ characters, powerById, filter, onChange, onOpen
   );
 }
 
-/* ------------------------------------------------------------------ */
-/* pieces                                                             */
-/* ------------------------------------------------------------------ */
-
-function shortLabel(value: string): string {
+function shorten(value: string): string {
   return value.length > 22 ? `${value.slice(0, 21)}…` : value;
 }
 
-function StatBox({ label, value, accent }: { label: string; value: string; accent: string }) {
+function MiniStat({ label, value, accent }: { label: string; value: string; accent: string }) {
   return (
     <div className="min-w-[86px] rounded-xl border border-white/8 bg-black/30 px-3 py-2">
       <p className="text-[0.58rem] uppercase tracking-[0.24em] text-slate-500">{label}</p>
@@ -378,8 +372,7 @@ function FilterSection({
   const [expanded, setExpanded] = useState(false);
   const [search, setSearch] = useState("");
   if (options.length === 0) return null;
-
-  const filtered = search ? options.filter((option) => option.value.toLowerCase().includes(search.toLowerCase())) : options;
+  const filtered = search ? options.filter((item) => item.value.toLowerCase().includes(search.toLowerCase())) : options;
   const shown = expanded ? filtered : filtered.slice(0, 6);
 
   return (
@@ -392,26 +385,23 @@ function FilterSection({
           ▾
         </span>
       </button>
-
       <div className="mt-2 flex flex-wrap gap-1.5">
-        {shown.map((option) => (
+        {shown.map((item) => (
           <button
-            key={option.value}
+            key={item.value}
             type="button"
-            onClick={() => onSelect(option.value)}
+            onClick={() => onSelect(item.value)}
             className={cn(
               "rounded-full border px-2 py-0.5 text-[0.62rem] font-semibold uppercase tracking-wider transition-colors",
-              active === option.value
+              active === item.value
                 ? "border-chakra-500/70 bg-chakra-500/20 text-white"
                 : "border-white/8 bg-white/3 text-slate-400 hover:border-white/25 hover:text-slate-200",
             )}
           >
-            {shortLabel(option.value)}{" "}
-            <span className="tabular opacity-55">{option.count}</span>
+            {shorten(item.value)} <span className="tabular opacity-55">{item.count}</span>
           </button>
         ))}
       </div>
-
       {expanded && filtered.length > 12 && (
         <input
           value={search}
@@ -420,7 +410,6 @@ function FilterSection({
           className="mt-2 w-full rounded-full border border-white/10 bg-ink-900/70 px-3 py-1.5 text-xs text-slate-200 placeholder:text-slate-600 focus:border-chakra-500/50 focus:outline-none"
         />
       )}
-
       {filtered.length > 6 && (
         <button
           type="button"
@@ -436,68 +425,69 @@ function FilterSection({
 
 function buildBanner(results: Character[], powerById: Map<number, number>) {
   if (results.length === 0) {
-    return { summary: "Widen the filters to bring these shinobi back into view.", average: 0, clans: 0, villages: 0, strongest: null, rankMix: [] };
+    return {
+      summary: "Widen the filters to bring these shinobi back into view.",
+      average: 0,
+      clans: 0,
+      villages: 0,
+      strongest: null as Character | null,
+      rankMix: [] as { label: string; count: number }[],
+    };
   }
   const clans = new Set<string>();
   const villages = new Set<string>();
-  const rankCounts = new Map<string, number>();
-  let total = 0;
+  const ranks = new Map<string, number>();
+  let totalPower = 0;
   let strongest = results[0];
-
   for (const character of results) {
-    const power = powerById.get(character.id) ?? 0;
-    total += power;
-    if (power > (powerById.get(strongest.id) ?? 0)) strongest = character;
+    const score = powerById.get(character.id) ?? 0;
+    totalPower += score;
+    if (score > (powerById.get(strongest.id) ?? 0)) strongest = character;
     if (character.personal?.clan) {
-      const clan = Array.isArray(character.personal.clan) ? character.personal.clan[0] : character.personal.clan;
-      if (clan) clans.add(clan);
+      const first = Array.isArray(character.personal.clan) ? character.personal.clan[0] : character.personal.clan;
+      if (first) clans.add(first);
     }
     const village = primaryVillage(character);
     if (village) villages.add(village);
     const rank = highestRank(character);
-    if (rank) rankCounts.set(rank, (rankCounts.get(rank) ?? 0) + 1);
+    if (rank) ranks.set(rank, (ranks.get(rank) ?? 0) + 1);
   }
-
-  const topClan = topKey(countBy(results, (character) => clansOf(character)[0]));
-  const topVillage = topKey(countBy(results, (character) => primaryVillage(character)));
-
-  const summary = [
-    `${formatNumber(results.length)} fighters`,
-    topClan ? `most from the ${topClan} clan` : null,
-    topVillage ? `largely out of ${shortName(topVillage)}` : null,
-    strongest ? `${strongest.name} tops the field at index ${powerById.get(strongest.id) ?? 0}` : null,
-  ]
-    .filter(Boolean)
-    .join(" · ");
-
+  const topClan = modeOf(countBy(results, (c) => clansOf(c)[0]));
+  const topVillage = modeOf(countBy(results, (c) => primaryVillage(c)));
   return {
-    summary,
-    average: Math.round(total / results.length),
+    summary: [
+      `${formatNumber(results.length)} fighters`,
+      topClan ? `most from the ${topClan} clan` : null,
+      topVillage ? `largely out of ${shortName(topVillage)}` : null,
+      strongest ? `${strongest.name} tops the field at index ${powerById.get(strongest.id) ?? 0}` : null,
+    ]
+      .filter(Boolean)
+      .join(" · "),
+    average: Math.round(totalPower / results.length),
     clans: clans.size,
     villages: villages.size,
     strongest,
-    rankMix: Array.from(rankCounts.entries())
+    rankMix: Array.from(ranks.entries())
       .map(([label, count]) => ({ label, count }))
       .sort((a, b) => b.count - a.count),
   };
 }
 
-function countBy(list: Character[], picker: (character: Character) => string | undefined | null) {
+function countBy(items: Character[], pick: (c: Character) => string | null | undefined) {
   const map = new Map<string, number>();
-  for (const character of list) {
-    const key = picker(character);
-    if (!key) continue;
-    map.set(key, (map.get(key) ?? 0) + 1);
+  for (const item of items) {
+    const key = pick(item);
+    if (key) map.set(key, (map.get(key) ?? 0) + 1);
   }
   return map;
 }
 
-function topKey(map: Map<string, number>): string | null {
+function modeOf(map: Map<string, number>): string | null {
   let best: string | null = null;
-  let bestCount = 0;
+  let max = 0;
   map.forEach((count, key) => {
-    if (count > bestCount) {
-      bestCount = count;
+    if (count > max) {
+      max = count;
       best = key;
     }
   });

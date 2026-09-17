@@ -116,7 +116,7 @@ export function TopBar({
                 Shinobi Codex
               </span>
               <span className="block text-[0.62rem] uppercase tracking-[0.34em] text-slate-500">
-                Naruto databook · v2.0
+                Naruto & Two Blue Vortex · v3.0
               </span>
             </span>
           </button>
@@ -200,12 +200,7 @@ export function TopBar({
 
           <div className="ml-auto flex items-center gap-2">
             <span className="hidden items-center gap-2 rounded-full border border-white/8 bg-white/3 px-3 py-1.5 text-[0.65rem] uppercase tracking-[0.2em] text-slate-400 sm:flex">
-              <span
-                className={cn(
-                  "h-1.5 w-1.5 rounded-full",
-                  syncing ? "bg-chakra-500 animate-pulse-soft" : "bg-emerald-400",
-                )}
-              />
+              <span className={cn("h-1.5 w-1.5 rounded-full", syncing ? "bg-chakra-500 animate-pulse-soft" : "bg-emerald-400")} />
               {syncing ? "Syncing" : `${formatNumber(count)} records`}
             </span>
             <button
@@ -214,7 +209,13 @@ export function TopBar({
               title="Re-sync with the Dattebayo archive"
               className="rounded-full border border-white/10 bg-white/3 p-2 text-slate-400 transition-colors hover:border-chakra-500/60 hover:text-chakra-400"
             >
-              <svg viewBox="0 0 24 24" className={cn("h-4 w-4", syncing && "animate-spin")} fill="none" stroke="currentColor" strokeWidth="2">
+              <svg
+                viewBox="0 0 24 24"
+                className={cn("h-4 w-4", syncing && "animate-spin")}
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
                 <path d="M21 12a9 9 0 11-3.2-6.9" />
                 <path d="M21 3v6h-6" />
               </svg>
@@ -222,9 +223,6 @@ export function TopBar({
           </div>
         </div>
 
-        {/* Fluid nav — always wraps, never clips. Labels collapse to kanji-only
-            on the narrowest phones and reappear as soon as there is room, so
-            every destination stays reachable at any screen ratio. */}
         <nav className="flex flex-wrap items-stretch gap-x-1 gap-y-1.5">
           {VIEWS.map((item) => {
             const active = item.id === view;
@@ -250,7 +248,6 @@ export function TopBar({
                 </span>
                 <span
                   className={cn(
-                    // Hidden below 400px, visible everywhere else.
                     "hidden truncate font-display text-[0.66rem] font-semibold uppercase tracking-[0.14em] min-[400px]:inline sm:text-[0.7rem] sm:tracking-[0.18em]",
                     active ? "text-white" : "text-slate-400 group-hover:text-slate-200",
                   )}

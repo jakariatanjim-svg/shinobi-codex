@@ -205,17 +205,14 @@ function ClanCard({
   rank: number;
   expanded: boolean;
   onToggle: () => void;
-  onCategory: (dimension: "clan" | "village" | "kekkei", value: string) => void;
+  onCategory: CodexActions["category"];
   onCharacter: (character: Character) => void;
 }) {
   const theme = themeFor(clan.villages[0]);
-  const knownMembers = clan.members.filter((member) => member.images?.length);
+  const withArt = clan.members.filter((member) => member.images?.length);
 
   return (
-    <div
-      className="shinobi-card overflow-hidden"
-      style={{ animationDelay: `${Math.min(rank, 10) * 25}ms` }}
-    >
+    <div className="shinobi-card overflow-hidden" style={{ animationDelay: `${Math.min(rank, 10) * 25}ms` }}>
       <button type="button" onClick={onToggle} className="flex w-full items-center gap-4 p-4 text-left">
         <span
           className="relative flex h-14 w-14 shrink-0 items-center justify-center rounded-xl border font-display text-lg font-bold"
@@ -248,16 +245,16 @@ function ClanCard({
                 {shortName(village)}
               </span>
             ))}
-            {clan.kekkeiGenkai.slice(0, 3).map((entry) => (
+            {clan.kekkeiGenkai.slice(0, 3).map((kg) => (
               <span
-                key={entry}
+                key={kg}
                 className="chip border-violet-400/30 text-violet-200"
                 onClickCapture={(event) => {
                   event.stopPropagation();
-                  onCategory("kekkei", entry);
+                  onCategory("kekkei", kg);
                 }}
               >
-                {entry}
+                {kg}
               </span>
             ))}
           </span>
@@ -280,7 +277,7 @@ function ClanCard({
         </span>
 
         <span className="ml-2 flex shrink-0 items-center gap-1">
-          {knownMembers.slice(0, 4).map((member) => (
+          {withArt.slice(0, 4).map((member) => (
             <span key={member.id} className="h-9 w-9 overflow-hidden rounded-full border border-white/12">
               <SmartImage src={member.images?.[0]} name={member.name} alt={member.name} width={100} className="h-full w-full" />
             </span>
@@ -294,7 +291,11 @@ function ClanCard({
         <div className="animate-fade-in border-t border-white/8 bg-black/25 p-4">
           <div className="flex flex-wrap items-center gap-3">
             <p className="text-[0.62rem] uppercase tracking-[0.28em] text-slate-500">Roster</p>
-            <button type="button" onClick={() => onCategory("clan", clan.name)} className="chip chip-button ml-auto">
+            <button
+              type="button"
+              onClick={() => onCategory("clan", clan.name)}
+              className="chip chip-button ml-auto"
+            >
               Open in character browser →
             </button>
           </div>

@@ -7,6 +7,7 @@ import { useDeferredValue, useMemo, useState } from "react";
 import type { Character } from "../lib/types";
 import { currentAge, formatNumber, powerOf, primaryVillage, shortName, themeFor } from "../lib/derive";
 import { eraCountLabel, hasAuthoredTimeline, timelineFor } from "../lib/eras";
+import { useMultiSourceImages } from "../lib/imageSources";
 import { cn } from "../utils/cn";
 import { EmptyState, Meter, Pill, SectionTitle, SmartImage } from "./ui";
 
@@ -141,7 +142,7 @@ export function VersionsView({ characters, ranked, selected, onSelect, onOpen }:
           </div>
 
           {visible < results.length && (
-            <div className="flex justify-center">
+            <div className="flex justify-center pt-2">
               <button
                 type="button"
                 onClick={() => setVisible((prev) => prev + PAGE * 2)}
@@ -157,8 +158,6 @@ export function VersionsView({ characters, ranked, selected, onSelect, onOpen }:
   );
 }
 
-/* ------------------------------------------------------------------ */
-
 function VersionTimeline({
   character,
   onBack,
@@ -168,12 +167,16 @@ function VersionTimeline({
   onBack: () => void;
   onOpen: (character: Character) => void;
 }) {
+  const { urls } = useMultiSourceImages(character);
   const theme = themeFor(primaryVillage(character));
-  const base = powerOf(character).score;
-  const versions = timelineFor(character);
+  const baseScore = powerOf(character).score;
+  const timeline = useMemo(() => timelineFor(character, urls), [character, urls]);
   const authored = hasAuthoredTimeline(character);
-  const peak = Math.max(base, ...versions.map((version) => version.powerIndex ?? 0));
-  const growth = versions.length > 1 ? (versions[versions.length - 1].powerIndex ?? base) - (versions[0].powerIndex ?? base) : 0;
+  const peak = Math.max(baseScore, ...timeline.map((entry) => entry.powerIndex ?? 0));
+  const growth =
+    timeline.length > 1
+      ? (timeline[timeline.length - 1].powerIndex ?? baseScore) - (timeline[0].powerIndex ?? baseScore)
+      : 0;
 
   return (
     <div className="space-y-6">
@@ -210,7 +213,7 @@ function VersionTimeline({
               {character.name}
             </h2>
             <p className="mt-1 text-[0.8rem] text-slate-400 sm:text-sm">
-              {eraCountLabel(versions.length)} · peak index {peak}
+              {eraCountLabel(timeline.length)} · peak index {peak}
               {currentAge(character) !== null && ` · age ${currentAge(character)}`}
             </p>
           </div>
@@ -223,16 +226,14 @@ function VersionTimeline({
         </div>
       </div>
 
-      {/* Vertical timeline — one column on phones, two from lg. No horizontal
-          scrolling anywhere, so the page wheel always behaves normally. */}
       <div className="grid gap-4 lg:grid-cols-2">
-        {versions.map((version, index) => {
-          const score = version.powerIndex ?? base;
-          const previous = index > 0 ? versions[index - 1].powerIndex ?? base : null;
-          const delta = previous === null ? null : score - previous;
+        {timeline.map((entry, index) => {
+          const score = entry.powerIndex ?? baseScore;
+          const prev = index > 0 ? timeline[index - 1].powerIndex ?? baseScore : null;
+          const delta = prev === null ? null : score - prev;
           return (
             <article
-              key={`${version.eraLabel}-${index}`}
+              key={`${entry.eraLabel}-${index}`}
               style={{ animationDelay: `${Math.min(index, 8) * 50}ms` }}
               className="shinobi-card animate-card-in flex flex-col p-4"
             >
@@ -245,9 +246,9 @@ function VersionTimeline({
                 </span>
                 <div className="min-w-0 flex-1">
                   <h3 className="font-display text-base font-bold uppercase leading-tight tracking-[0.08em] text-white">
-                    {version.eraLabel}
+                    {entry.eraLabel}
                   </h3>
-                  <p className="text-[0.62rem] uppercase tracking-[0.2em] text-slate-500">Age {version.ageValue}</p>
+                  <p className="text-[0.62rem] uppercase tracking-[0.2em] text-slate-500">Age {entry.ageValue}</p>
                 </div>
                 <div className="shrink-0 text-right">
                   <p className="tabular font-display text-2xl font-bold leading-none" style={{ color: theme.accent }}>
@@ -265,30 +266,28 @@ function VersionTimeline({
                 <Meter value={(score / Math.max(1, peak)) * 100} color={theme.accent} height={5} />
               </div>
 
-              {version.imageUrl && (
-                <div className="mt-3 h-40 overflow-hidden rounded-xl border border-white/8 sm:h-48">
-                  <SmartImage
-                    src={version.imageUrl}
-                    name={`${character.name} ${version.eraLabel}`}
-                    alt={`${character.name} — ${version.eraLabel}`}
-                    width={480}
-                    className="h-full w-full"
-                  />
-                </div>
-              )}
+              <div className="mt-3 h-44 overflow-hidden rounded-xl border border-white/8 sm:h-52">
+                <SmartImage
+                  src={entry.imageUrl || urls[index % Math.max(1, urls.length)]}
+                  name={`${character.name} ${entry.eraLabel}`}
+                  alt={`${character.name} — ${entry.eraLabel}`}
+                  width={480}
+                  className="h-full w-full"
+                />
+              </div>
 
-              <p className="mt-3 text-[0.82rem] leading-relaxed text-slate-300">{version.description}</p>
+              <p className="mt-3 text-[0.82rem] leading-relaxed text-slate-300">{entry.description}</p>
 
-              {version.powerContext && (
+              {entry.powerContext && (
                 <div className="mt-3 rounded-xl border border-white/8 bg-black/30 px-3 py-2">
                   <p className="text-[0.54rem] uppercase tracking-[0.28em] text-slate-500">Power profile</p>
-                  <p className="mt-0.5 text-[0.78rem] text-slate-200">{version.powerContext}</p>
+                  <p className="mt-0.5 text-[0.78rem] text-slate-200">{entry.powerContext}</p>
                 </div>
               )}
 
-              {version.notes && version.notes.length > 0 && (
+              {entry.notes && entry.notes.length > 0 && (
                 <ul className="mt-3 space-y-1 text-[0.72rem] text-slate-400">
-                  {version.notes.map((note) => (
+                  {entry.notes.map((note) => (
                     <li key={note} className="flex gap-2">
                       <span style={{ color: theme.accent }}>▸</span>
                       <span className="min-w-0">{note}</span>
@@ -301,16 +300,16 @@ function VersionTimeline({
         })}
       </div>
 
-      {versions.length > 1 && (
+      {timeline.length > 1 && (
         <div className="glass rounded-2xl p-4 sm:p-5">
           <p className="font-display text-[0.6rem] font-semibold uppercase tracking-[0.4em] text-chakra-500">Growth curve</p>
           <div className="mt-4 space-y-3">
-            {versions.map((version, index) => {
-              const score = version.powerIndex ?? base;
+            {timeline.map((entry, index) => {
+              const score = entry.powerIndex ?? baseScore;
               return (
                 <div key={`bar-${index}`}>
                   <div className="flex items-baseline justify-between gap-3 text-[0.64rem] uppercase tracking-[0.16em]">
-                    <span className="truncate text-slate-400">{version.eraLabel}</span>
+                    <span className="truncate text-slate-400">{entry.eraLabel}</span>
                     <span className="tabular shrink-0" style={{ color: theme.accent }}>
                       {score}
                     </span>
@@ -326,10 +325,10 @@ function VersionTimeline({
             {authored
               ? "Indices are set per era from that form's recorded abilities."
               : "Indices are scaled across this shinobi's recorded age brackets from their databook Chakra Index."}{" "}
-            Base score for {character.name} is {formatNumber(base)}.
+            Base score for {character.name} is {formatNumber(baseScore)}.
           </p>
           <div className="mt-3 flex flex-wrap gap-1.5">
-            <Pill color={theme.accent}>Base {base}</Pill>
+            <Pill color={theme.accent}>Base {baseScore}</Pill>
             <Pill color="#7fd6a5">Peak {peak}</Pill>
             {growth > 0 && <Pill color="#6fd3ff">Growth +{growth}</Pill>}
           </div>

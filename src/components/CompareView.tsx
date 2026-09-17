@@ -35,6 +35,18 @@ interface CompareViewProps {
   initial?: Character[];
 }
 
+interface Entry {
+  character: Character;
+  power: PowerBreakdown;
+  jutsu: number;
+  natures: number;
+  kekkei: number;
+  rank: number;
+  classes: number;
+  tools: number;
+  age: number | null;
+}
+
 export function CompareView({ characters, powerById, ranked, onOpen, initial = [] }: CompareViewProps) {
   const [selected, setSelected] = useState<Character[]>(initial.slice(0, 4));
   const [query, setQuery] = useState("");
@@ -53,7 +65,7 @@ export function CompareView({ characters, powerById, ranked, onOpen, initial = [
     setQuery("");
   };
 
-  const stats = useMemo(
+  const stats = useMemo<Entry[]>(
     () =>
       selected.map((character) => {
         const power = powerOf(character);
@@ -150,7 +162,10 @@ export function CompareView({ characters, powerById, ranked, onOpen, initial = [
                   const theme = themeFor(primaryVillage(entry.character));
                   return (
                     <span key={entry.character.id} className="flex items-center gap-2 text-[0.68rem] text-slate-300">
-                      <span className="h-2 w-2 rounded-full" style={{ background: colorAt(index), boxShadow: `0 0 10px ${colorAt(index)}` }} />
+                      <span
+                        className="h-2 w-2 rounded-full"
+                        style={{ background: colorAt(index), boxShadow: `0 0 10px ${colorAt(index)}` }}
+                      />
                       {entry.character.name} <span className="tabular text-slate-500">({theme.label})</span>
                     </span>
                   );
@@ -159,13 +174,21 @@ export function CompareView({ characters, powerById, ranked, onOpen, initial = [
             </div>
 
             <div className="space-y-4">
-              <div className="grid gap-3" style={{ gridTemplateColumns: `repeat(auto-fit, minmax(180px, 1fr))` }}>
+              <div className="grid gap-3" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))" }}>
                 {stats.map((entry, index) => {
                   const theme = themeFor(primaryVillage(entry.character));
                   return (
-                    <div key={entry.character.id} className="shinobi-card animate-card-in p-3" style={{ animationDelay: `${index * 60}ms` }}>
+                    <div
+                      key={entry.character.id}
+                      className="shinobi-card animate-card-in p-3"
+                      style={{ animationDelay: `${index * 60}ms` }}
+                    >
                       <div className="flex items-center gap-3">
-                        <button type="button" onClick={() => onOpen(entry.character)} className="h-14 w-14 shrink-0 overflow-hidden rounded-xl border border-white/12">
+                        <button
+                          type="button"
+                          onClick={() => onOpen(entry.character)}
+                          className="h-14 w-14 shrink-0 overflow-hidden rounded-xl border border-white/12"
+                        >
                           <SmartImage src={entry.character.images?.[0]} name={entry.character.name} alt={entry.character.name} width={140} className="h-full w-full" />
                         </button>
                         <div className="min-w-0 flex-1">
@@ -183,7 +206,7 @@ export function CompareView({ characters, powerById, ranked, onOpen, initial = [
                         </div>
                         <button
                           type="button"
-                          onClick={() => setSelected((prev) => prev.filter((member) => member.id !== entry.character.id))}
+                          onClick={() => setSelected((prev) => prev.filter((item) => item.id !== entry.character.id))}
                           className="text-slate-600 transition-colors hover:text-blood-500"
                         >
                           ✕
@@ -279,48 +302,28 @@ export function CompareView({ characters, powerById, ranked, onOpen, initial = [
   );
 }
 
-/* ------------------------------------------------------------------ */
-
-const PALETTE = ["#ff9d3d", "#6fd3ff", "#5ddc7a", "#ff5a5a"];
-
-interface Entry {
-  character: Character;
-  power: PowerBreakdown;
-  jutsu: number;
-  natures: number;
-  kekkei: number;
-  rank: number;
-  classes: number;
-  tools: number;
-  age: number | null;
-  [key: string]: unknown;
-}
-
+const COLORS = ["#ff9d3d", "#6fd3ff", "#5ddc7a", "#ff5a5a"];
 function colorAt(index: number): string {
-  return PALETTE[index % PALETTE.length];
+  return COLORS[index % COLORS.length];
 }
 
 function Radar({ entries }: { entries: Entry[] }) {
-  const size = 320;
-  const center = size / 2;
-  const radius = 118;
-
-  const pointsFor = (entry: (typeof entries)[number]) =>
+  const pointsFor = (entry: Entry) =>
     AXES.map((axis, index) => {
-      const raw = entry[axis.key] as number;
-      const ratio = Math.min(1, raw / axis.max);
+      const val = entry[axis.key];
+      const ratio = Math.min(1, val / axis.max);
       const angle = (Math.PI * 2 * index) / AXES.length - Math.PI / 2;
-      return [center + Math.cos(angle) * radius * ratio, center + Math.sin(angle) * radius * ratio] as const;
+      return [160 + Math.cos(angle) * 118 * ratio, 160 + Math.sin(angle) * 118 * ratio];
     });
 
   return (
-    <svg viewBox={`0 0 ${size} ${size}`} className="mt-2 h-[320px] w-[320px]">
+    <svg viewBox="0 0 320 320" className="mt-2 h-[320px] w-[320px]">
       {[0.25, 0.5, 0.75, 1].map((ring) => (
         <polygon
           key={ring}
           points={AXES.map((_, index) => {
             const angle = (Math.PI * 2 * index) / AXES.length - Math.PI / 2;
-            return `${center + Math.cos(angle) * radius * ring},${center + Math.sin(angle) * radius * ring}`;
+            return `${160 + Math.cos(angle) * 118 * ring},${160 + Math.sin(angle) * 118 * ring}`;
           }).join(" ")}
           fill="none"
           stroke="rgba(255,255,255,0.09)"
@@ -331,10 +334,16 @@ function Radar({ entries }: { entries: Entry[] }) {
         const angle = (Math.PI * 2 * index) / AXES.length - Math.PI / 2;
         return (
           <g key={axis.key}>
-            <line x1={center} y1={center} x2={center + Math.cos(angle) * radius} y2={center + Math.sin(angle) * radius} stroke="rgba(255,255,255,0.08)" />
+            <line
+              x1={160}
+              y1={160}
+              x2={160 + Math.cos(angle) * 118}
+              y2={160 + Math.sin(angle) * 118}
+              stroke="rgba(255,255,255,0.08)"
+            />
             <text
-              x={center + Math.cos(angle) * (radius + 22)}
-              y={center + Math.sin(angle) * (radius + 22)}
+              x={160 + Math.cos(angle) * 140}
+              y={160 + Math.sin(angle) * 140}
               textAnchor="middle"
               dominantBaseline="middle"
               className="fill-slate-500 text-[9px] uppercase"
@@ -347,18 +356,18 @@ function Radar({ entries }: { entries: Entry[] }) {
       })}
       {entries.map((entry, index) => {
         const color = colorAt(index);
-        const points = pointsFor(entry);
+        const pts = pointsFor(entry);
         return (
           <g key={entry.character.id}>
             <polygon
-              points={points.map(([x, y]) => `${x},${y}`).join(" ")}
+              points={pts.map(([x, y]) => `${x},${y}`).join(" ")}
               fill={`${color}26`}
               stroke={color}
               strokeWidth="2"
               style={{ filter: `drop-shadow(0 0 10px ${color}77)` }}
             />
-            {points.map(([x, y], pointIndex) => (
-              <circle key={pointIndex} cx={x} cy={y} r="3" fill={color} />
+            {pts.map(([x, y], idx) => (
+              <circle key={idx} cx={x} cy={y} r="3" fill={color} />
             ))}
           </g>
         );
@@ -372,7 +381,7 @@ function Verdict({ stats }: { stats: Entry[] }) {
   const winner = stats.slice().sort((a, b) => b.power.score - a.power.score)[0];
   const runnerUp = stats.slice().sort((a, b) => b.power.score - a.power.score)[1];
   const dominance = AXES.map((axis) => {
-    const best = stats.slice().sort((a, b) => (b[axis.key] as number) - (a[axis.key] as number))[0];
+    const best = stats.slice().sort((a, b) => b[axis.key] - a[axis.key])[0];
     return { axis: axis.label, name: best.character.name };
   });
 

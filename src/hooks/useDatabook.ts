@@ -1,9 +1,10 @@
-/* Shinobi Codex v1.0 — loads the databook once and derives lookup indexes */
+/* Shinobi Codex v3.0 — loads the databook once, merges Two Blue Vortex canon & multi-image galleries */
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { EMPTY_DATASET, loadDataset } from "../lib/api";
 import { EXTRA_IMAGES } from "../lib/fallbackImages";
-import { affiliations, clansOf, kekkeiOf, powerOf, primaryVillage, uniq } from "../lib/derive";
+import { TBV_CHARACTER_UPDATES, TBV_NEW_CHARACTERS } from "../lib/tbvData";
+import { affiliations, clansOf, kekkeiOf, powerOf, primaryVillage, toList, uniq } from "../lib/derive";
 import type { Character, Dataset, LoadState } from "../lib/types";
 
 export interface ClanStat {
@@ -36,6 +37,7 @@ export interface Databook {
   kekkeiStats: { name: string; members: Character[]; villages: string[] }[];
   teamStats: { name: string; members: Character[] }[];
   ranked: Character[];
+  tbvCharacters: Character[];
   powerById: Map<number, number>;
   findCharacter: (name: string) => Character | undefined;
   totals: {
@@ -50,6 +52,7 @@ export interface Databook {
     kekkeiGenkai: number;
     classified: number;
     deceased: number;
+    tbv: number;
   };
   refresh: () => void;
 }
@@ -57,7 +60,7 @@ export interface Databook {
 const INITIAL_STATE: LoadState = {
   phase: "idle",
   progress: 0,
-  message: "Opening the Hokage's databook…",
+  message: "Opening the Hokage's databook v3.0…",
   fromCache: false,
   error: null,
   counts: {
@@ -80,7 +83,7 @@ export function useDatabook(): Databook {
   const run = useCallback(async (force: boolean) => {
     if (force) {
       setData(EMPTY_DATASET);
-      setState({ ...INITIAL_STATE, phase: "fetching", message: "Re-summoning the databook…" });
+      setState({ ...INITIAL_STATE, phase: "fetching", message: "Re-summoning the databook v3.0…" });
     }
     setState((prev) => ({ ...prev, phase: "fetching", error: null }));
     try {
@@ -93,7 +96,7 @@ export function useDatabook(): Databook {
         },
       });
       setData(dataset);
-      setState((prev) => ({ ...prev, phase: "ready", progress: 1, message: "Databook online", fromCache: false }));
+      setState((prev) => ({ ...prev, phase: "ready", progress: 1, message: "Databook v3.0 online", fromCache: false }));
     } catch (err) {
       setState((prev) => ({
         ...prev,
@@ -111,7 +114,62 @@ export function useDatabook(): Databook {
   }, [run]);
 
   const indexed = useMemo(() => {
-    const characters = data.characters;
+    // Merge base API characters with Two Blue Vortex new characters & updates
+    const rawCharacters = data.characters.slice();
+    const existingNames = new Set(rawCharacters.map((c) => c.name.toLowerCase()));
+
+    for (const tbvChar of TBV_NEW_CHARACTERS) {
+      if (!existingNames.has(tbvChar.name.toLowerCase())) {
+        rawCharacters.push(tbvChar);
+        existingNames.add(tbvChar.name.toLowerCase());
+      }
+    }
+
+    const characters = rawCharacters.map((char) => {
+      const update = TBV_CHARACTER_UPDATES[char.name];
+      const extraImgs = EXTRA_IMAGES[char.name];
+      const existingImgs = char.images ?? [];
+      // Put EXTRA_IMAGES first so dynamic combat/TBV art replaces plain static default portraits
+      const mergedImages = extraImgs?.length ? uniq([...extraImgs, ...existingImgs]) : existingImgs;
+
+      if (!update) {
+        if (mergedImages !== existingImgs) {
+          return { ...char, images: mergedImages };
+        }
+        return char;
+      }
+
+      const personal = { ...(char.personal ?? {}) };
+      if (update.extraKekkei) {
+        personal.kekkeiGenkai = uniq([...toList(personal.kekkeiGenkai), ...update.extraKekkei]);
+      }
+      if (update.extraClassifications) {
+        personal.classification = uniq([...toList(personal.classification), ...update.extraClassifications]);
+      }
+      if (update.ageUpdate) {
+        personal.age = { ...(personal.age ?? {}), ...update.ageUpdate };
+      }
+      if (update.titlesUpdate) {
+        personal.titles = uniq([...(personal.titles ?? []), ...update.titlesUpdate]);
+      }
+
+      const rank = { ...(char.rank ?? {}) };
+      if (update.rankUpdate) {
+        rank.ninjaRank = { ...(rank.ninjaRank ?? {}), ...update.rankUpdate };
+      }
+
+      return {
+        ...char,
+        images: mergedImages,
+        jutsu: update.extraJutsu ? uniq([...update.extraJutsu, ...(char.jutsu ?? [])]) : char.jutsu,
+        natureType: update.extraNatures ? uniq([...update.extraNatures, ...(char.natureType ?? [])]) : char.natureType,
+        uniqueTraits: update.extraTraits ? uniq([...update.extraTraits, ...(char.uniqueTraits ?? [])]) : char.uniqueTraits,
+        tools: update.extraTools ? uniq([...update.extraTools, ...(char.tools ?? [])]) : char.tools,
+        personal,
+        rank,
+      };
+    });
+
     const byId = new Map<number, Character>();
     const byName = new Map<string, Character>();
     const clanMap = new Map<string, Character[]>();
@@ -131,22 +189,20 @@ export function useDatabook(): Databook {
     let jutsuCount = 0;
     let classified = 0;
     let deceased = 0;
+    const tbvCharacters: Character[] = [];
 
     for (const character of characters) {
-      // MERGE extra official artwork with whatever the API returned. API images
-      // are kept first; supplementary URLs are appended and de-duplicated. This
-      // gives characters a real multi-image gallery instead of a single (often
-      // broken) portrait.
-      const extra = EXTRA_IMAGES[character.name];
-      if (extra && extra.length) {
-        const existing = character.images ?? [];
-        (character as { images?: string[] }).images = uniq([...existing, ...extra]);
-      }
       byId.set(character.id, character);
       byName.set(character.name.toLowerCase(), character);
       jutsuCount += character.jutsu?.length ?? 0;
       if (character.rank?.ninjaRank || character.rank?.ninjaRegistration) classified++;
       if (character.personal?.status?.toLowerCase().includes("deceas")) deceased++;
+
+      const isTbv =
+        toList(character.personal?.classification).some((c) => c.toLowerCase().includes("two blue vortex")) ||
+        Boolean(character.personal?.age?.["Two Blue Vortex"]) ||
+        Boolean(character.rank?.ninjaRank?.["Two Blue Vortex"]);
+      if (isTbv) tbvCharacters.push(character);
 
       clansOf(character).forEach((clan) => ensure(clanMap, clan).push(character));
       affiliations(character).forEach((affiliation) => ensure(villageMap, affiliation).push(character));
@@ -161,6 +217,8 @@ export function useDatabook(): Databook {
     const powerById = new Map(decorated.map((entry) => [entry.character.id, entry.power]));
     const ranked = decorated.map((entry) => entry.character);
 
+    tbvCharacters.sort((a, b) => (powerById.get(b.id) ?? 0) - (powerById.get(a.id) ?? 0));
+
     const clanNames = uniq([...data.clans.map((clan) => clan.name), ...clanMap.keys()]).sort();
     const clanStats: ClanStat[] = clanNames.map((name) => {
       const members = (clanMap.get(name) ?? []).slice().sort((a, b) => (powerById.get(b.id) ?? 0) - (powerById.get(a.id) ?? 0));
@@ -173,7 +231,7 @@ export function useDatabook(): Databook {
       });
       const villages = Array.from(villageCounts.entries())
         .sort((a, b) => b[1] - a[1])
-        .map(([name]) => name);
+        .map(([vName]) => vName);
       return {
         name,
         members,
@@ -214,7 +272,25 @@ export function useDatabook(): Databook {
       })
       .sort((a, b) => b.members.length - a.members.length);
 
+    // Enrich Kara / Shinju roster with Two Blue Vortex operatives
+    const karaIds = new Set(data.kara.map((k) => k.name.toLowerCase()));
+    const enrichedKara = [
+      ...data.kara.map((member) => byName.get(member.name.toLowerCase()) ?? member),
+      ...TBV_NEW_CHARACTERS.filter(
+        (c) =>
+          !karaIds.has(c.name.toLowerCase()) &&
+          (affiliations(c).includes("Kara") || affiliations(c).includes("Shinju")),
+      ),
+    ];
+
+    const enrichedDataset: Dataset = {
+      ...data,
+      characters,
+      kara: enrichedKara,
+    };
+
     return {
+      enrichedDataset,
       byId,
       byName,
       clanStats,
@@ -223,6 +299,7 @@ export function useDatabook(): Databook {
       teamStats,
       powerById,
       ranked,
+      tbvCharacters,
       totals: {
         characters: characters.length,
         clans: clanStats.length,
@@ -231,10 +308,11 @@ export function useDatabook(): Databook {
         teams: teamStats.length,
         beasts: data.tailedBeasts.length,
         akatsuki: data.akatsuki.length,
-        kara: data.kara.length,
+        kara: enrichedKara.length,
         kekkeiGenkai: kekkeiStats.length,
         classified,
         deceased,
+        tbv: tbvCharacters.length,
       },
     };
   }, [data]);
@@ -248,7 +326,20 @@ export function useDatabook(): Databook {
     [indexed],
   );
 
-  return { data, state, refresh, findCharacter, ...indexed };
+  return {
+    data: indexed.enrichedDataset,
+    state,
+    refresh,
+    findCharacter,
+    byId: indexed.byId,
+    byName: indexed.byName,
+    clanStats: indexed.clanStats,
+    villageStats: indexed.villageStats,
+    kekkeiStats: indexed.kekkeiStats,
+    teamStats: indexed.teamStats,
+    powerById: indexed.powerById,
+    ranked: indexed.ranked,
+    tbvCharacters: indexed.tbvCharacters,
+    totals: indexed.totals,
+  };
 }
-
-

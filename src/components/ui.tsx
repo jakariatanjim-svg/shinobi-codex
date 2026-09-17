@@ -247,7 +247,7 @@ export function SortSelect<T extends string>({
         className="rounded-full border border-white/10 bg-ink-800/80 px-3 py-1.5 text-[0.72rem] font-medium tracking-normal text-slate-200 outline-none transition-colors hover:border-chakra-500/60 focus:border-chakra-500"
       >
         {options.map((option) => (
-          <option key={option.value} value={option.value} className="bg-ink-800">
+          <option key={option.value} value={option.value} className="bg-ink-900 text-slate-100">
             {option.label}
           </option>
         ))}
@@ -262,7 +262,7 @@ export function Toggle({
   label,
 }: {
   checked: boolean;
-  onChange: (next: boolean) => void;
+  onChange: (checked: boolean) => void;
   label: string;
 }) {
   return (

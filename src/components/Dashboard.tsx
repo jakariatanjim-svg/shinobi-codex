@@ -22,6 +22,7 @@ import { Meter, Pill, SectionTitle, SmartImage, StatTile } from "./ui";
 interface DashboardProps {
   characters: Character[];
   ranked: Character[];
+  tbvCharacters: Character[];
   powerById: Map<number, number>;
   clanStats: ClanStat[];
   villageStats: VillageStat[];
@@ -39,12 +40,14 @@ interface DashboardProps {
     kara: number;
     kekkeiGenkai: number;
     deceased: number;
+    tbv?: number;
   };
 }
 
 export function Dashboard({
   characters,
   ranked,
+  tbvCharacters,
   powerById,
   clanStats,
   villageStats,
@@ -65,7 +68,10 @@ export function Dashboard({
     return pool[day % pool.length];
   }, [ranked]);
 
-  const topClans = useMemo(() => clanStats.slice().sort((a, b) => b.strength - a.strength || b.members.length - a.members.length).slice(0, 8), [clanStats]);
+  const topClans = useMemo(
+    () => clanStats.slice().sort((a, b) => b.strength - a.strength || b.members.length - a.members.length).slice(0, 8),
+    [clanStats],
+  );
   const biggestClans = useMemo(() => clanStats.slice().sort((a, b) => b.members.length - a.members.length).slice(0, 8), [clanStats]);
   const topVillages = useMemo(
     () => villageStats.slice().sort((a, b) => b.members.length - a.members.length).slice(0, 8),
@@ -115,6 +121,13 @@ export function Dashboard({
                 className="rounded-full border border-chakra-500/70 bg-chakra-500/18 px-6 py-2.5 font-display text-sm uppercase tracking-[0.24em] text-chakra-400 transition-all hover:bg-chakra-500/32"
               >
                 Browse {formatNumber(totals.characters)} shinobi
+              </button>
+              <button
+                type="button"
+                onClick={() => actions.category("classification", "Two Blue Vortex")}
+                className="rounded-full border border-shinobi-400/60 bg-shinobi-500/15 px-6 py-2.5 font-display text-sm uppercase tracking-[0.24em] text-shinobi-400 transition-all hover:bg-shinobi-500/30"
+              >
+                Two Blue Vortex Manga ({tbvCharacters.length})
               </button>
               <button
                 type="button"
@@ -187,7 +200,35 @@ export function Dashboard({
         </div>
       </section>
 
-      {/* ------------------------------------------------ rankings */}
+      {/* ------------------------------------------------ Boruto: Two Blue Vortex Manga Showcase */}
+      {tbvCharacters.length > 0 && (
+        <section className="relative overflow-hidden rounded-3xl border border-shinobi-500/25 bg-gradient-to-br from-ink-900/95 via-ink-950 to-ink-900/90 p-5 sm:p-7">
+          <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-shinobi-500/15 blur-3xl" />
+          <SectionTitle
+            kicker="v3.0 Manga Canon Update"
+            title="Boruto: Two Blue Vortex"
+            subtitle="Timeskip shinobi, Shinjutsu cyborgs (Eida, Daemon, Kashin Koji, Code) and the sentient Divine Trees / Shinju (Jura, Hidari, Matsuri, Ryū, Mamushi) with manga artwork and updated jutsu."
+            right={
+              <button
+                type="button"
+                onClick={() => actions.category("classification", "Two Blue Vortex")}
+                className="chip chip-button border-shinobi-400/50 text-shinobi-400"
+              >
+                Filter all TBV ({tbvCharacters.length}) →
+              </button>
+            }
+          />
+          <div className="scroll-rail -mx-1 flex gap-4 overflow-x-auto px-1 pb-2">
+            {tbvCharacters.map((character, index) => (
+              <div key={character.id} className="w-[210px] shrink-0">
+                <CharacterCard character={character} index={index} onOpen={actions.openCharacter} compact />
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* ------------------------------------------------ strongest shinobi */}
       <section>
         <SectionTitle
           kicker="Chakra index"
@@ -208,7 +249,7 @@ export function Dashboard({
         </div>
       </section>
 
-      {/* ------------------------------------------------ clans */}
+      {/* ------------------------------------------------ clan rankings */}
       <section className="grid gap-6 lg:grid-cols-2">
         <div className="glass rounded-2xl p-5">
           <div className="flex items-center justify-between">
@@ -217,10 +258,18 @@ export function Dashboard({
               All clans
             </button>
           </div>
-          <p className="mt-1 text-[0.72rem] text-slate-500">Ranked by the average Chakra Index of their five strongest shinobi.</p>
+          <p className="mt-1 text-[0.72rem] text-slate-500">
+            Ranked by the average Chakra Index of their five strongest shinobi.
+          </p>
           <div className="mt-4 space-y-3">
             {topClans.map((clan, index) => (
-              <ClanRow key={clan.name} clan={clan} index={index} onOpen={actions.category} onCharacter={actions.openCharacter} />
+              <ClanRow
+                key={clan.name}
+                clan={clan}
+                index={index}
+                onOpen={actions.category}
+                onCharacter={actions.openCharacter}
+              />
             ))}
           </div>
         </div>
@@ -232,16 +281,25 @@ export function Dashboard({
               Compare
             </button>
           </div>
-          <p className="mt-1 text-[0.72rem] text-slate-500">Ranked by how many members appear in the databook.</p>
+          <p className="mt-1 text-[0.72rem] text-slate-500">
+            Ranked by how many members appear in the databook.
+          </p>
           <div className="mt-4 space-y-3">
             {biggestClans.map((clan, index) => (
-              <ClanRow key={clan.name} clan={clan} index={index} mode="size" onOpen={actions.category} onCharacter={actions.openCharacter} />
+              <ClanRow
+                key={clan.name}
+                clan={clan}
+                index={index}
+                mode="size"
+                onOpen={actions.category}
+                onCharacter={actions.openCharacter}
+              />
             ))}
           </div>
         </div>
       </section>
 
-      {/* ------------------------------------------------ villages + ranks */}
+      {/* ------------------------------------------------ villages + rank/kekkei */}
       <section className="grid gap-6 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)]">
         <div className="glass rounded-2xl p-5">
           <div className="flex items-center justify-between">
@@ -253,7 +311,7 @@ export function Dashboard({
           <div className="mt-4 space-y-3.5">
             {topVillages.map((village) => {
               const theme = themeFor(village.name);
-              const share = (village.members.length / Math.max(1, characters.length)) * 100;
+              const pct = (village.members.length / Math.max(1, characters.length)) * 100;
               return (
                 <button
                   key={village.name}
@@ -270,7 +328,7 @@ export function Dashboard({
                     </span>
                   </div>
                   <div className="mt-1.5">
-                    <Meter value={share} color={theme.accent} height={7} />
+                    <Meter value={pct} color={theme.accent} height={7} />
                   </div>
                   <div className="mt-1 flex flex-wrap gap-1">
                     {village.powerhouses.slice(0, 4).map((member) => (
@@ -312,10 +370,10 @@ export function Dashboard({
           <div className="glass rounded-2xl p-5">
             <h3 className="font-display text-lg font-bold uppercase tracking-[0.18em] text-white">Bloodline limits</h3>
             <div className="mt-3 flex flex-wrap gap-1.5">
-              {kgRanking.map((entry) => (
-                <button key={entry.name} type="button" onClick={() => actions.category("kekkei", entry.name)}>
+              {kgRanking.map((item) => (
+                <button key={item.name} type="button" onClick={() => actions.category("kekkei", item.name)}>
                   <Pill color="#c4a0ff">
-                    {entry.name} <span className="tabular opacity-60">{entry.members.length}</span>
+                    {item.name} <span className="tabular opacity-60">{item.members.length}</span>
                   </Pill>
                 </button>
               ))}
@@ -327,9 +385,7 @@ export function Dashboard({
             >
               <span className="font-display text-2xl text-chakra-500">尾</span>
               <span>
-                <span className="block font-display text-sm font-bold uppercase tracking-[0.18em] text-white">
-                  Tailed beasts
-                </span>
+                <span className="block font-display text-sm font-bold uppercase tracking-[0.18em] text-white">Tailed beasts</span>
                 <span className="block text-[0.68rem] text-slate-400">
                   {beasts.length} bijū catalogued with jinchūriki and techniques
                 </span>
@@ -341,8 +397,6 @@ export function Dashboard({
     </div>
   );
 }
-
-/* ------------------------------------------------------------------ */
 
 function SpotlightCard({
   character,
@@ -377,7 +431,10 @@ function SpotlightCard({
       <div className="absolute inset-0" style={{ background: `linear-gradient(200deg, ${theme.deep}55, transparent 55%)` }} />
 
       <div className="relative">
-        <span className="chip" style={{ borderColor: `${theme.accent}55`, background: `${theme.accent}1a`, color: theme.accent }}>
+        <span
+          className="chip"
+          style={{ borderColor: `${theme.accent}55`, background: `${theme.accent}1a`, color: theme.accent }}
+        >
           Shinobi of the day
         </span>
         <h3 className="mt-2 font-display text-3xl font-bold uppercase leading-none tracking-tight text-white sm:text-4xl">
@@ -421,7 +478,7 @@ function ClanRow({
   clan: ClanStat;
   index: number;
   mode?: "strength" | "size";
-  onOpen: (dimension: "clan", value: string) => void;
+  onOpen: CodexActions["category"];
   onCharacter: (character: Character) => void;
 }) {
   const value = mode === "strength" ? clan.strength : Math.min(100, clan.members.length * 6);

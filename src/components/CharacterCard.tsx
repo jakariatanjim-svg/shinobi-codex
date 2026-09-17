@@ -81,7 +81,7 @@ export function CharacterCard({ character, index, onOpen, compact }: CharacterCa
           )}
         </div>
 
-        <div className="absolute right-3 top-3 flex flex-col items-end gap-1">
+        <div className="absolute right-3 top-3 flex flex-col items-end gap-1.5">
           <span
             className="tabular flex h-11 w-11 flex-col items-center justify-center rounded-full border backdrop-blur-md"
             style={{ borderColor: `${theme.accent}66`, background: "rgba(4,6,10,0.6)", color: theme.accent }}
@@ -90,6 +90,11 @@ export function CharacterCard({ character, index, onOpen, compact }: CharacterCa
             <span className="font-display text-sm font-bold leading-none">{power.score}</span>
             <span className="text-[0.42rem] uppercase tracking-[0.16em] opacity-70">index</span>
           </span>
+          {(character.images?.length ?? 0) > 1 && (
+            <span className="tabular rounded-full border border-white/15 bg-black/65 px-2 py-0.5 text-[0.55rem] font-semibold text-slate-200 backdrop-blur-sm">
+              {character.images?.length} pics
+            </span>
+          )}
         </div>
 
         <div className="absolute inset-x-0 bottom-0 p-3.5">
@@ -138,7 +143,10 @@ export function CharacterCard({ character, index, onOpen, compact }: CharacterCa
               key={nature}
               title={nature}
               className="h-2 w-2 rounded-full"
-              style={{ background: natureColor(nature), boxShadow: `0 0 8px ${natureColor(nature)}` }}
+              style={{
+                background: natureColor(nature),
+                boxShadow: `0 0 8px ${natureColor(nature)}`,
+              }}
             />
           ))}
           <span className="ml-auto font-display text-[0.6rem] uppercase tracking-[0.2em] text-slate-600">

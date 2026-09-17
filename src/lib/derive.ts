@@ -160,6 +160,7 @@ export function initials(name: string): string {
 /* ------------------------------------------------------------------ */
 
 const ERA_PRIORITY = [
+  "Two Blue Vortex",
   "Boruto Manga",
   "Boruto Anime",
   "Boruto Movie",
@@ -336,6 +337,24 @@ export interface PowerBreakdown {
 }
 
 const LEGENDARY_BOOSTS: Record<string, { boost: number; overrideTier?: string }> = {
+  "Naruto Uzumaki": { boost: 36, overrideTier: "Kage Level" },
+  "Sasuke Uchiha": { boost: 36, overrideTier: "Kage Level" },
+  "Boruto Uzumaki": { boost: 42, overrideTier: "Kage Level" },
+  "Kawaki": { boost: 40, overrideTier: "Kage Level" },
+  "Jura": { boost: 55, overrideTier: "Kage Level" },
+  "Hidari": { boost: 46, overrideTier: "Kage Level" },
+  "Matsuri (Shinju)": { boost: 42, overrideTier: "Kage Level" },
+  "Ryū (Shinju)": { boost: 44, overrideTier: "Kage Level" },
+  "Mamushi": { boost: 41, overrideTier: "Kage Level" },
+  "Eida": { boost: 48, overrideTier: "Kage Level" },
+  "Daemon": { boost: 50, overrideTier: "Kage Level" },
+  "Shibai Ōtsutsuki": { boost: 60, overrideTier: "Kage Level" },
+  "Isshiki Ōtsutsuki": { boost: 52, overrideTier: "Kage Level" },
+  "Momoshiki Ōtsutsuki": { boost: 44, overrideTier: "Kage Level" },
+  "Koji Kashin": { boost: 38, overrideTier: "Kage Level" },
+  "Code": { boost: 42, overrideTier: "Kage Level" },
+  "Sarada Uchiha": { boost: 30, overrideTier: "Legendary" },
+  "Himawari Uzumaki": { boost: 36, overrideTier: "Kage Level" },
   "Itachi Uchiha": { boost: 38, overrideTier: "Legendary" },
   "Madara Uchiha": { boost: 45, overrideTier: "Kage Level" },
   "Jiraiya": { boost: 36, overrideTier: "Legendary" },
@@ -431,6 +450,8 @@ const VILLAGE_THEMES: Record<string, Theme> = {
   Tanigakure: { accent: "#c2b48a", soft: "rgba(194,180,138,0.16)", deep: "#262218", label: "Hidden Valley" },
   Akatsuki: { accent: "#ff5a5a", soft: "rgba(255,90,90,0.18)", deep: "#330f0f", label: "Akatsuki" },
   Kara: { accent: "#e879c8", soft: "rgba(232,121,200,0.16)", deep: "#2e0f28", label: "Kara" },
+  Shinju: { accent: "#ff3366", soft: "rgba(255,51,102,0.18)", deep: "#2a0a16", label: "Divine Trees (TBV)" },
+  "Ōtsutsuki": { accent: "#a855f7", soft: "rgba(168,85,247,0.18)", deep: "#1e1033", label: "Ōtsutsuki Clan" },
   Otogakur: { accent: "#c98be0", soft: "rgba(201,139,224,0.16)", deep: "#241430", label: "Hidden Sound" },
 };
 

@@ -1,4 +1,4 @@
-/* Shinobi Codex v1.0 — application shell */
+/* Shinobi Codex v3.0 — application shell (full-page character view & Two Blue Vortex integration) */
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { LoadingScreen } from "./components/LoadingScreen";
@@ -39,7 +39,10 @@ export default function App() {
       if (!Number.isNaN(id)) setOpenId(id);
       return;
     }
-    if (parts[0] && isViewId(parts[0])) setView(parts[0]);
+    if (parts[0] && isViewId(parts[0])) {
+      setOpenId(null);
+      setView(parts[0]);
+    }
   }, []);
 
   useEffect(() => {
@@ -56,7 +59,7 @@ export default function App() {
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
-  }, [view]);
+  }, [view, openId]);
 
   /* -------------------------------------------------------------- actions */
   const roster = useMemo(
@@ -94,7 +97,6 @@ export default function App() {
         const character = databook.byId.get(target.id);
         if (character) {
           setOpenId(character.id);
-          setView("characters");
         }
         return;
       }
@@ -147,123 +149,123 @@ export default function App() {
       />
 
       <main className="mx-auto max-w-[1700px] px-4 py-7 sm:px-6 lg:px-8">
-        {view === "dashboard" && (
-          <Dashboard
-            characters={data.characters}
-            ranked={databook.ranked}
-            powerById={databook.powerById}
-            clanStats={databook.clanStats}
-            villageStats={databook.villageStats}
-            kekkeiStats={databook.kekkeiStats}
-            beasts={data.tailedBeasts}
-            actions={actions}
-            totals={databook.totals}
-          />
-        )}
-
-        {view === "characters" && (
-          <CharactersView
-            characters={data.characters}
-            powerById={databook.powerById}
-            filter={filter}
-            onChange={setFilter}
-            onOpen={openCharacter}
-          />
-        )}
-
-        {view === "clans" && <ClansView clanStats={databook.clanStats} actions={actions} />}
-
-        {view === "villages" && (
-          <VillagesView villageStats={databook.villageStats} characters={data.characters} actions={actions} />
-        )}
-
-        {view === "kekkei" && <KekkeiView kekkeiStats={databook.kekkeiStats} actions={actions} />}
-
-        {view === "beasts" && (
-          <BeastsView beasts={data.tailedBeasts} findCharacter={databook.findCharacter} actions={actions} />
-        )}
-
-        {view === "teams" && <TeamsView teamStats={databook.teamStats} teams={data.teams} actions={actions} />}
-
-        {view === "akatsuki" && (
-          <OrgView
-            title="Akatsuki"
-            kicker="Crimson dawn"
-            subtitle="Every recorded Akatsuki member, their partners, status and chakra signature."
-            members={data.akatsuki}
+        {openCharacterRecord ? (
+          <CharacterDetail
+            character={openCharacterRecord}
+            siblings={siblings}
             findCharacter={databook.findCharacter}
-            actions={actions}
-          />
-        )}
-
-        {view === "kara" && (
-          <OrgView
-            title="Kara"
-            kicker="The inner shell"
-            subtitle="Kara operatives from the Boruto era with affiliations, abilities and status."
-            members={data.kara}
-            findCharacter={databook.findCharacter}
-            actions={actions}
-          />
-        )}
-
-        {view === "compare" && (
-          <CompareView
-            characters={data.characters}
-            powerById={databook.powerById}
-            ranked={databook.ranked}
+            onClose={() => setOpenId(null)}
             onOpen={openCharacter}
+            onCategory={category}
+            onTimeline={(target) => {
+              setVersionTarget(target);
+              setOpenId(null);
+              setView("versions");
+            }}
           />
-        )}
+        ) : (
+          <>
+            {view === "dashboard" && (
+              <Dashboard
+                characters={data.characters}
+                ranked={databook.ranked}
+                tbvCharacters={databook.tbvCharacters}
+                powerById={databook.powerById}
+                clanStats={databook.clanStats}
+                villageStats={databook.villageStats}
+                kekkeiStats={databook.kekkeiStats}
+                beasts={data.tailedBeasts}
+                actions={actions}
+                totals={databook.totals}
+              />
+            )}
 
-        {view === "versions" && (
-          <VersionsView
-            characters={data.characters}
-            ranked={databook.ranked}
-            selected={versionTarget}
-            onSelect={setVersionTarget}
-            onOpen={openCharacter}
-          />
+            {view === "characters" && (
+              <CharactersView
+                characters={data.characters}
+                powerById={databook.powerById}
+                filter={filter}
+                onChange={setFilter}
+                onOpen={openCharacter}
+              />
+            )}
+
+            {view === "clans" && <ClansView clanStats={databook.clanStats} actions={actions} />}
+
+            {view === "villages" && (
+              <VillagesView
+                villageStats={databook.villageStats}
+                characters={data.characters}
+                actions={actions}
+              />
+            )}
+
+            {view === "kekkei" && <KekkeiView kekkeiStats={databook.kekkeiStats} actions={actions} />}
+
+            {view === "beasts" && (
+              <BeastsView
+                beasts={data.tailedBeasts}
+                findCharacter={databook.findCharacter}
+                actions={actions}
+              />
+            )}
+
+            {view === "teams" && <TeamsView teamStats={databook.teamStats} teams={data.teams} actions={actions} />}
+
+            {view === "akatsuki" && (
+              <OrgView
+                title="Akatsuki"
+                kicker="Crimson dawn"
+                subtitle="Every recorded Akatsuki member, their partners, status and chakra signature."
+                members={data.akatsuki}
+                findCharacter={databook.findCharacter}
+                actions={actions}
+              />
+            )}
+
+            {view === "kara" && (
+              <OrgView
+                title="Kara & Shinju"
+                kicker="The Inner Shell & Sentient Divine Trees"
+                subtitle="Kara operatives and Two Blue Vortex Divine Tree (Shinju) incarnations with affiliations, Shinjutsu and chakra index."
+                members={data.kara}
+                findCharacter={databook.findCharacter}
+                actions={actions}
+              />
+            )}
+
+            {view === "compare" && (
+              <CompareView
+                characters={data.characters}
+                powerById={databook.powerById}
+                ranked={databook.ranked}
+                onOpen={openCharacter}
+              />
+            )}
+
+            {view === "versions" && (
+              <VersionsView
+                characters={data.characters}
+                ranked={databook.ranked}
+                selected={versionTarget}
+                onSelect={setVersionTarget}
+                onOpen={openCharacter}
+              />
+            )}
+          </>
         )}
       </main>
 
-      <footer className="mt-6 border-t border-white/6 bg-black/30">
-        <div className="mx-auto flex max-w-[1700px] flex-col gap-3 px-4 py-6 text-[0.68rem] text-slate-500 sm:flex-row sm:items-center sm:px-8">
-          <p className="font-display text-sm uppercase tracking-[0.3em] text-slate-400">Shinobi Codex v2.0</p>
-          <p className="sm:ml-4">
-            Character data streamed from the{" "}
-            <a
-              href="https://dattebayo-api.onrender.com"
-              target="_blank"
-              rel="noreferrer"
-              className="text-chakra-400/90 underline decoration-dotted underline-offset-2 hover:text-chakra-400"
-            >
-              Dattebayo API
-            </a>{" "}
-            · official anime &amp; manga artwork via the Naruto Fandom archive. Unofficial fan reference — Naruto &amp; Boruto
-            belong to Masashi Kishimoto, Shueisha and Studio Pierrot.
+      <footer className="mt-16 border-t border-white/6 py-8 text-center text-xs text-slate-500">
+        <div className="mx-auto flex max-w-[1700px] flex-col items-center justify-between gap-3 px-4 sm:flex-row sm:px-6 lg:px-8">
+          <p className="font-display uppercase tracking-[0.28em] text-slate-400">
+            Shinobi Codex · v3.0 — Naruto, Shippūden & Boruto: Two Blue Vortex Databook
           </p>
-          <p className="tabular sm:ml-auto">
-            {new Intl.NumberFormat("en-US").format(data.characters.length)} records · snapshot cached in this browser
+          <p className="text-[0.68rem] text-slate-600">
+            Multi-Source Visual Archive (Fandom MediaWiki · AniList · Dattebayo) · Offline IndexedDB Cache
           </p>
         </div>
       </footer>
-
-      {openCharacterRecord && (
-        <CharacterDetail
-          character={openCharacterRecord}
-          siblings={siblings}
-          findCharacter={databook.findCharacter}
-          onClose={() => setOpenId(null)}
-          onOpen={openCharacter}
-          onCategory={category}
-          onTimeline={(target) => {
-            setVersionTarget(target);
-            setOpenId(null);
-            setView("versions");
-          }}
-        />
-      )}
     </div>
   );
 }
