@@ -1,7 +1,7 @@
 # Shinobi Codex v3.5
 
 > **Naruto · Naruto Shippūden · Boruto: Two Blue Vortex — Character Database & Databook**
-
+hosted : https://shinobicodex.jakariatanjim.workers.dev/
 A fast, offline-capable character codex spanning the entire Naruto saga — from the Academy days of Part I to the current **Two Blue Vortex** era of Boruto. Built with React 19, TypeScript, Vite and Tailwind CSS 4, powered by the [Dattebayo API](https://dattebayo-api.onrender.com) with an IndexedDB offline cache.
 
 ---
