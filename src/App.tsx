@@ -1,4 +1,4 @@
-/* Shinobi Codex v3.0 — application shell (full-page character view & Two Blue Vortex integration) */
+/* Shinobi Codex v3.5 — application shell (full-page character view & Two Blue Vortex integration) */
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { LoadingScreen } from "./components/LoadingScreen";
@@ -15,6 +15,7 @@ import type { CodexActions } from "./lib/actions";
 import { EMPTY_FILTER, type CharacterFilter, type Dimension } from "./lib/filters";
 import { isViewId, type ViewId } from "./lib/nav";
 import { runQuery } from "./lib/query";
+import { useHorizontalScroll } from "./lib/useHorizontalScroll";
 import type { Character } from "./lib/types";
 
 const CATEGORY_DIMENSIONS: Dimension[] = ["clan", "village", "team", "kekkei", "classification", "rank", "org", "nature", "status", "blood", "sex"];
@@ -27,6 +28,8 @@ export default function App() {
   const [filter, setFilter] = useState<CharacterFilter>(EMPTY_FILTER);
   const [openId, setOpenId] = useState<number | null>(null);
   const [versionTarget, setVersionTarget] = useState<Character | null>(null);
+
+  useHorizontalScroll();
 
   const ready = data.characters.length > 0;
 
@@ -259,7 +262,7 @@ export default function App() {
       <footer className="mt-16 border-t border-white/6 py-8 text-center text-xs text-slate-500">
         <div className="mx-auto flex max-w-[1700px] flex-col items-center justify-between gap-3 px-4 sm:flex-row sm:px-6 lg:px-8">
           <p className="font-display uppercase tracking-[0.28em] text-slate-400">
-            Shinobi Codex · v3.0 — Naruto, Shippūden & Boruto: Two Blue Vortex Databook
+            Shinobi Codex · v3.5 — Naruto, Shippūden & Boruto: Two Blue Vortex Databook
           </p>
           <p className="text-[0.68rem] text-slate-600">
             Multi-Source Visual Archive (Fandom MediaWiki · AniList · Dattebayo) · Offline IndexedDB Cache

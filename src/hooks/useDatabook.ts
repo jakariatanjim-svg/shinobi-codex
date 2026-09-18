@@ -1,4 +1,4 @@
-/* Shinobi Codex v3.0 — loads the databook once, merges Two Blue Vortex canon & multi-image galleries */
+/* Shinobi Codex v3.5 — loads the databook once, merges Two Blue Vortex canon & multi-image galleries */
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { EMPTY_DATASET, loadDataset } from "../lib/api";
@@ -60,7 +60,7 @@ export interface Databook {
 const INITIAL_STATE: LoadState = {
   phase: "idle",
   progress: 0,
-  message: "Opening the Hokage's databook v3.0…",
+  message: "Opening the Hokage's databook v3.5…",
   fromCache: false,
   error: null,
   counts: {
@@ -83,7 +83,7 @@ export function useDatabook(): Databook {
   const run = useCallback(async (force: boolean) => {
     if (force) {
       setData(EMPTY_DATASET);
-      setState({ ...INITIAL_STATE, phase: "fetching", message: "Re-summoning the databook v3.0…" });
+      setState({ ...INITIAL_STATE, phase: "fetching", message: "Re-summoning the databook v3.5…" });
     }
     setState((prev) => ({ ...prev, phase: "fetching", error: null }));
     try {
@@ -96,7 +96,7 @@ export function useDatabook(): Databook {
         },
       });
       setData(dataset);
-      setState((prev) => ({ ...prev, phase: "ready", progress: 1, message: "Databook v3.0 online", fromCache: false }));
+      setState((prev) => ({ ...prev, phase: "ready", progress: 1, message: "Databook v3.5 online", fromCache: false }));
     } catch (err) {
       setState((prev) => ({
         ...prev,

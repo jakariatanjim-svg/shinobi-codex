@@ -83,7 +83,7 @@ export const VERSION_TIMELINES: Record<string, CharacterVersion[]> = {
       eraLabel: "Part I — Genin",
       ageValue: "12–13",
       powerIndex: 40,
-      imageUrl: "https://static.wikia.nocookie.net/naruto/images/2/21/Sasuke_Part_1.png",
+      imageUrl: "https://static.wikia.nocookie.net/naruto/images/5/51/Sasuke_Part_I.png",
       description:
         "The last loyal Uchiha, driven by the massacre of his clan. Awakens the two-tomoe Sharingan against Haku and learns the Chidori from Kakashi before defecting to Orochimaru.",
       powerContext: "Two-tomoe Sharingan, Chidori twice per day, elite taijutsu.",
@@ -123,7 +123,7 @@ export const VERSION_TIMELINES: Record<string, CharacterVersion[]> = {
       eraLabel: "Two Blue Vortex — Rogue Master",
       ageValue: "33+ (Two Blue Vortex)",
       powerIndex: 93,
-      imageUrl: "https://static.wikia.nocookie.net/naruto/images/7/74/Hidari_Fullbody.png",
+      imageUrl: "https://static.wikia.nocookie.net/naruto/images/b/b7/Sasuke_Part_3.png",
       description:
         "Defies Omnipotence out of trust in his daughter Sarada, flees Konoha with Boruto and trains him in every Uchiha sword and lightning technique before sacrificing himself against Code and the Claw Grimes — spawning Hidari.",
       powerContext: "Mastered kenjutsu and single-eye Eternal Mangekyō; passed his Kusanagi sword to Boruto.",
@@ -320,7 +320,7 @@ export const VERSION_TIMELINES: Record<string, CharacterVersion[]> = {
       eraLabel: "Child Prodigy",
       ageValue: "5–13",
       powerIndex: 48,
-      imageUrl: "https://static.wikia.nocookie.net/naruto/images/2/27/Kakashi_Hatake.png",
+      imageUrl: "https://static.wikia.nocookie.net/naruto/images/7/75/Eight_Man_Squad.png",
       description:
         "Graduated the Academy at five and made Chūnin at six. Son of the White Fang, he lived by the rulebook until Obito's death taught him that abandoning comrades makes you worse than trash.",
       powerContext: "Chakra-flow tantō, early Chidori development, no Sharingan yet.",
@@ -340,7 +340,7 @@ export const VERSION_TIMELINES: Record<string, CharacterVersion[]> = {
       eraLabel: "Part II — Mangekyō",
       ageValue: "29–31",
       powerIndex: 82,
-      imageUrl: "https://static.wikia.nocookie.net/naruto/images/6/67/Allied_Forces_Jutsu.png",
+      imageUrl: "https://static.wikia.nocookie.net/naruto/images/7/75/Eight_Man_Squad.png",
       description:
         "Awakens the Mangekyō Sharingan and masters Kamui, warping targets into another dimension. Fights Pain, Obito and the Ten-Tails as a war-front division commander.",
       powerContext: "Kamui long-range and short-range, chakra-limited to a handful of uses.",
@@ -363,7 +363,7 @@ export const VERSION_TIMELINES: Record<string, CharacterVersion[]> = {
       eraLabel: "Part I — Genin",
       ageValue: "12–13",
       powerIndex: 22,
-      imageUrl: "https://static.wikia.nocookie.net/naruto/images/9/94/Sakura_Haruno_Part_I.png",
+      imageUrl: "https://static.wikia.nocookie.net/naruto/images/3/30/Sakura_Part_I.png",
       description:
         "Top of the class in written theory with flawless chakra control, but the weakest of Team 7 in the field. Cuts her hair during the Forest of Death to defend her teammates.",
       powerContext: "Perfect chakra control, genjutsu resistance, minimal offence.",
@@ -373,7 +373,7 @@ export const VERSION_TIMELINES: Record<string, CharacterVersion[]> = {
       eraLabel: "Part II — Tsunade's Apprentice",
       ageValue: "15–17",
       powerIndex: 62,
-      imageUrl: "https://static.wikia.nocookie.net/naruto/images/6/67/Allied_Forces_Jutsu.png",
+      imageUrl: "https://static.wikia.nocookie.net/naruto/images/6/64/Sakura_Part_1.png",
       description:
         "Trains under the Fifth Hokage to become a medical ninja whose chakra-enhanced strength shatters the ground. Poisons and kills Sasori of the Red Sand alongside Chiyo.",
       powerContext: "Cherry Blossom Impact, Chakra Scalpel, antidote synthesis.",
@@ -383,7 +383,7 @@ export const VERSION_TIMELINES: Record<string, CharacterVersion[]> = {
       eraLabel: "Hundred Healings & New Era",
       ageValue: "17–32+",
       powerIndex: 79,
-      imageUrl: "https://static.wikia.nocookie.net/naruto/images/9/94/Sakura_Haruno_Part_I.png",
+      imageUrl: "https://static.wikia.nocookie.net/naruto/images/a/a5/Sakura_Part_III.png",
       description:
         "Releases the Strength of a Hundred Seal she spent three years storing, standing beside Naruto and Sasuke against Kaguya, and later heads Konoha Hospital in the Boruto / Two Blue Vortex era.",
       powerContext: "Byakugō regeneration, Katsuyu summoning, Head of Konoha Medical Corps.",
@@ -396,7 +396,7 @@ export const VERSION_TIMELINES: Record<string, CharacterVersion[]> = {
       eraLabel: "Part I — Shukaku's Host",
       ageValue: "12–13",
       powerIndex: 58,
-      imageUrl: "https://static.wikia.nocookie.net/naruto/images/0/05/Gaara_awakens.png",
+      imageUrl: "https://static.wikia.nocookie.net/naruto/images/2/20/Gaara_in_Part_I.png",
       description:
         "A jinchūriki raised as a weapon and taught that he existed only to love himself. Kills without hesitation until Naruto's words during the Konoha Crush break the cycle.",
       powerContext: "Automatic sand shield, Sand Coffin, partial Shukaku transformation.",
@@ -416,7 +416,7 @@ export const VERSION_TIMELINES: Record<string, CharacterVersion[]> = {
       eraLabel: "Two Blue Vortex — Veteran Kazekage",
       ageValue: "32+",
       powerIndex: 87,
-      imageUrl: "https://static.wikia.nocookie.net/naruto/images/0/05/Gaara_awakens.png",
+      imageUrl: "https://static.wikia.nocookie.net/naruto/images/1/1b/Gaara_Part_III.png",
       description:
         "Protects Sunagakure and his adoptive son Shinki during Matsuri and the Claw Grimes' invasion of the Hidden Sand, before Shinki seals Gaara to save his life.",
       powerContext: "Refined Magnet Release sand, decades of Kage-level command experience.",
@@ -429,7 +429,7 @@ export const VERSION_TIMELINES: Record<string, CharacterVersion[]> = {
       eraLabel: "Team Hiruzen & Sannin",
       ageValue: "6–35",
       powerIndex: 70,
-      imageUrl: "https://static.wikia.nocookie.net/naruto/images/2/21/Profile_Jiraiya.PNG",
+      imageUrl: "https://static.wikia.nocookie.net/naruto/images/1/1f/Jiraiya_Young.png",
       description:
         "Earns the title Sannin after surviving Hanzō of the Salamander during the Second Shinobi World War. Trains the Ame orphans — Nagato, Yahiko and Konan — then mentors Minato Namikaze.",
       powerContext: "Full toad summoning, Rasengan taught to Minato, elite fūinjutsu.",
@@ -439,7 +439,7 @@ export const VERSION_TIMELINES: Record<string, CharacterVersion[]> = {
       eraLabel: "Toad Sage",
       ageValue: "50–54",
       powerIndex: 88,
-      imageUrl: "https://static.wikia.nocookie.net/naruto/images/1/16/Jiraiya.png",
+      imageUrl: "https://static.wikia.nocookie.net/naruto/images/b/bf/Jiraiya_SM_Naruto_Mobile.png",
       description:
         "Travels the world gathering intelligence and writing novels while training Naruto. Enters imperfect Sage Mode with Fukasaku and Shima fused to his shoulders.",
       powerContext: "Sage Mode with the Two Great Sage Toads, Sage Art: Goemon, Needle Jizō.",
@@ -452,7 +452,7 @@ export const VERSION_TIMELINES: Record<string, CharacterVersion[]> = {
       eraLabel: "Anbu Captain & Massacre",
       ageValue: "7–13",
       powerIndex: 84,
-      imageUrl: "https://static.wikia.nocookie.net/naruto/images/b/bb/Itachi.png",
+      imageUrl: "https://static.wikia.nocookie.net/naruto/images/e/e9/Itachi_Child_OL.png",
       description:
         "Graduated the Academy at seven, made Anbu captain at thirteen, and chose the village over the clan to prevent a civil war — sparing Sasuke alone.",
       powerContext: "Mangekyō Sharingan — Tsukuyomi, Amaterasu, Susanoo.",
@@ -462,7 +462,7 @@ export const VERSION_TIMELINES: Record<string, CharacterVersion[]> = {
       eraLabel: "Akatsuki & Edo Tensei",
       ageValue: "17–21",
       powerIndex: 93,
-      imageUrl: "https://static.wikia.nocookie.net/naruto/images/7/79/Eternal_Mangeky%C5%8D_Armoured_Susanoo.png",
+      imageUrl: "https://static.wikia.nocookie.net/naruto/images/1/18/Itachi%27s_armoured_Susanoo.png",
       description:
         "Wields the Totsuka Blade and Yata Mirror in his final duel with Sasuke, and later breaks Kabuto's Edo Tensei during the Fourth Shinobi World War using Izanami.",
       powerContext: "Complete Susanoo with Totsuka Blade & Yata Mirror, Izanami.",
@@ -475,7 +475,7 @@ export const VERSION_TIMELINES: Record<string, CharacterVersion[]> = {
       eraLabel: "Warring States & Valley of the End",
       ageValue: "Adult",
       powerIndex: 92,
-      imageUrl: "https://static.wikia.nocookie.net/naruto/images/2/2b/Madara_Uchiha.png",
+      imageUrl: "https://static.wikia.nocookie.net/naruto/images/f/fd/Madara.png",
       description:
         "Co-founds Konohagakure with Hashirama Senju and later clashes with him at the Valley of the End with a Susanoo-armoured Nine-Tails.",
       powerContext: "Eternal Mangekyō Sharingan, Perfect Susanoo, Nine-Tails control.",
@@ -485,7 +485,7 @@ export const VERSION_TIMELINES: Record<string, CharacterVersion[]> = {
       eraLabel: "Ten-Tails Jinchūriki",
       ageValue: "Peak",
       powerIndex: 100,
-      imageUrl: "https://static.wikia.nocookie.net/naruto/images/7/79/Eternal_Mangeky%C5%8D_Armoured_Susanoo.png",
+      imageUrl: "https://static.wikia.nocookie.net/naruto/images/9/93/Madara%27s_New_Form.png",
       description:
         "Awakens dual Rinnegan and the Rinne Sharingan as the Ten-Tails' jinchūriki, casting the Infinite Tsukuyomi across the world.",
       powerContext: "Six Paths Senjutsu, Limbo: Border Jail, Truth-Seeking Balls.",

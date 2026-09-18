@@ -116,7 +116,7 @@ export function TopBar({
                 Shinobi Codex
               </span>
               <span className="block text-[0.62rem] uppercase tracking-[0.34em] text-slate-500">
-                Naruto & Two Blue Vortex · v3.0
+                Naruto & Two Blue Vortex · v3.5
               </span>
             </span>
           </button>

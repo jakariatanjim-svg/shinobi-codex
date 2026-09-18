@@ -5,7 +5,7 @@ import type { Character, CollectionKey, Dataset, Group } from "./types";
 export const BASE_URL = "https://dattebayo-api.onrender.com";
 /** Bumping this invalidates every cached snapshot — required in v2.0 so the
  *  image-casing fix and new fields reach users who already have a cache. */
-export const CACHE_VERSION = "codex-v3.0";
+export const CACHE_VERSION = "codex-v3.5";
 
 const DB_NAME = "shinobi-codex";
 const DB_STORE = "collections";

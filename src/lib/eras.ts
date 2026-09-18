@@ -1,4 +1,4 @@
-/* Shinobi Codex v3.0 — Universal Era Timelines & Era-Specific Image Resolver */
+/* Shinobi Codex v3.5 — Universal Era Timelines with Era-Matched Imagery */
 
 import { VERSION_TIMELINES } from "./versions";
 import { highestRank, kekkeiOf, powerOf, stripNote, toList, uniq } from "./derive";
@@ -57,9 +57,106 @@ function sentence(parts: (string | null | undefined)[]): string {
   return cleaned.join(" ");
 }
 
+/* ------------------------------------------------------------------ */
+/* Era → filename keyword matching (prevents random timeline images)   */
+/* ------------------------------------------------------------------ */
+
+type EraTier = "academy" | "part1" | "part2" | "newera";
+
+function tierForEra(label: string): EraTier {
+  if (label.includes("Academy") || label.includes("Chūnin Exams")) return "part1";
+  if (label.includes("Part I")) return "part1";
+  if (label.includes("Part II")) return "part2";
+  if (
+    label.includes("Blank") ||
+    label.includes("Gaiden") ||
+    label.includes("Boruto") ||
+    label.includes("New Era") ||
+    label.includes("Two Blue Vortex")
+  )
+    return "newera";
+  return "part2";
+}
+
+const TIER_KEYWORDS: Record<EraTier, string[]> = {
+  academy: ["kid", "child", "young", "academy", "part_i", "part-i", "part_1", "part-1", "genin", "part i"],
+  part1: ["part_i", "part-i", "part_1", "part-1", "kid", "child", "young", "part i", "genin", "in_part_i"],
+  part2: ["part_ii", "part-ii", "part_2", "part-2", "part ii", "war", "shippuden", "akatsuki", "part_iii", "part-iii"],
+  newera: [
+    "boruto",
+    "tbv",
+    "two_blue",
+    "part_iii",
+    "part-iii",
+    "part_3",
+    "part-3",
+    "the_last",
+    "hokage",
+    "adult",
+    "new_era",
+    "movie",
+  ],
+};
+
+/** Scores how well an image filename matches an era; higher is better. */
+function scoreImageForEra(fileName: string, tier: EraTier): number {
+  const name = fileName.toLowerCase().split("/revision/")[0].split("?")[0];
+  let score = 0;
+
+  // Direct keyword match to the requested tier
+  for (const token of TIER_KEYWORDS[tier]) {
+    if (name.includes(token)) score += 10;
+  }
+  // Penalise keywords from *other* tiers so a Part II era never uses kid art
+  const otherTiers = (Object.keys(TIER_KEYWORDS) as EraTier[]).filter((t) => t !== tier && t !== "academy");
+  for (const otherTier of otherTiers) {
+    for (const token of TIER_KEYWORDS[otherTier]) {
+      if (name.includes(token) && token.length > 4) score -= 6;
+    }
+  }
+  if (tier === "part1" && /part_ii|part_iii|part_2|part_3|boruto|tbv/.test(name)) score -= 12;
+  if (tier === "newera" && /part_i\b|kid|child/.test(name)) score -= 12;
+  if (tier === "part2" && /part_i\b|kid|child/.test(name)) score -= 10;
+  if (tier === "part2" && /boruto|tbv|part_iii|part_3/.test(name)) score -= 4;
+
+  return score;
+}
+
+/**
+ * Greedily assigns gallery images to era labels so each era shows an
+ * era-matched picture and consecutive eras never reuse the same image.
+ */
+export function matchEraImages(labels: string[], images: string[]): (string | undefined)[] {
+  if (!images.length) return labels.map(() => undefined);
+
+  const used = new Set<string>();
+  const result: (string | undefined)[] = [];
+
+  // Sort candidate indices per tier lazily
+  for (const label of labels) {
+    const tier = tierForEra(label);
+    const scored = images
+      .map((url, idx) => ({ url, idx, score: scoreImageForEra(url, tier) }))
+      .sort((a, b) => b.score - a.score || a.idx - b.idx);
+
+    const bestUnused = scored.find((candidate) => !used.has(candidate.url) && candidate.score > 0);
+    const bestAny = scored.find((candidate) => !used.has(candidate.url));
+    const picked = bestUnused ?? bestAny ?? scored[0];
+
+    if (picked) {
+      used.add(picked.url);
+      result.push(picked.url);
+    } else {
+      result.push(images[0]);
+    }
+  }
+
+  return result;
+}
+
 /**
  * Derives a timeline purely from what the databook records about a character,
- * mapping each era to a distinct image in the character's gallery.
+ * mapping each era to an era-matched image from the character's gallery.
  */
 function deriveTimeline(character: Character, galleryUrls?: string[]): CharacterVersion[] {
   const base = powerOf(character).score;
@@ -67,7 +164,7 @@ function deriveTimeline(character: Character, galleryUrls?: string[]): Character
   const ranks = character.rank?.ninjaRank ?? {};
   const heights = character.personal?.height ?? {};
   const weights = character.personal?.weight ?? {};
-  const images = galleryUrls?.length ? galleryUrls : (character.images ?? []);
+  const images = galleryUrls?.length ? galleryUrls : character.images ?? [];
 
   const labels = uniq([...Object.keys(ages), ...Object.keys(ranks), ...Object.keys(heights)]).sort(
     (a, b) => eraRank(a) - eraRank(b),
@@ -80,6 +177,7 @@ function deriveTimeline(character: Character, galleryUrls?: string[]): Character
   const occupations = uniq(toList(character.personal?.occupation));
   const jutsuCount = character.jutsu?.length ?? 0;
   const natures = uniq(toList(character.natureType).map(stripNote));
+  const matchedImages = matchEraImages(labels, images);
 
   if (labels.length === 0) {
     const only = highestRank(character);
@@ -126,14 +224,11 @@ function deriveTimeline(character: Character, galleryUrls?: string[]): Character
     if (isLast && teams.length) notes.push(`Teams · ${teams.slice(0, 3).join(", ")}`);
     if (isLast && occupations.length) notes.push(`Occupation · ${occupations.slice(0, 2).join(", ")}`);
 
-    // Cycle distinct images across eras so each era card displays its own portrait
-    const eraImg = images.length ? images[index % images.length] : undefined;
-
     return {
       eraLabel: label,
       ageValue: age ?? "Unrecorded",
       powerIndex: scaleIndex(base, index, labels.length),
-      imageUrl: eraImg,
+      imageUrl: matchedImages[index],
       description:
         sentence([
           blurbFor(label),
@@ -157,16 +252,19 @@ const cache = new WeakMap<Character, CharacterVersion[]>();
 
 /**
  * The single entry point used by the UI. Authored timelines win; everyone else
- * receives a derived one. Guarantees every era has an `imageUrl` when available.
+ * receives a derived one. Era images are always era-matched when possible.
  */
 export function timelineFor(character: Character, galleryUrls?: string[]): CharacterVersion[] {
   const authored = VERSION_TIMELINES[character.name];
-  const images = galleryUrls?.length ? galleryUrls : (character.images ?? []);
+  const images = galleryUrls?.length ? galleryUrls : character.images ?? [];
 
   if (authored?.length) {
+    // Fill any missing authored artwork using era-matched gallery images
+    const authoredLabels = authored.map((entry) => entry.eraLabel);
+    const fallbacks = matchEraImages(authoredLabels, images);
     return authored.map((entry, idx) => ({
       ...entry,
-      imageUrl: entry.imageUrl || (images.length ? images[idx % images.length] : undefined),
+      imageUrl: entry.imageUrl || fallbacks[idx],
     }));
   }
 

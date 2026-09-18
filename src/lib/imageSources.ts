@@ -1,8 +1,8 @@
 /* Shinobi Codex v3.0 — Multi-Source Image Engine
  *
  * Combines curated action/TBV art, Dattebayo images, Naruto/Boruto Fandom
- * MediaWiki scene/manga renders, AniList GraphQL CDN portraits, and Jikan/MAL
- * gallery images into a unified multi-image gallery with source labels. */
+ * MediaWiki scene/manga renders and AniList GraphQL CDN portraits into a
+ * unified multi-image gallery with source labels. */
 
 import { useEffect, useMemo, useState } from "react";
 import { EXTRA_IMAGES } from "./fallbackImages";
@@ -17,8 +17,9 @@ export interface GalleryImage {
 
 const memoryCache = new Map<string, GalleryImage[]>();
 
-/** Ignore UI icons, symbols, flags, and tiny badges when harvesting MediaWiki images. */
-const NOISE_REGEX = /(symbol|icon|logo|flag|sign|browse_information|camera_font|gender|kanji|map|crest|svg|button|arrow|stub|star)/i;
+/** Ignore UI icons, symbols, flags, logos, chibi/game banners and tiny badges when harvesting MediaWiki images. */
+const NOISE_REGEX =
+  /(symbol|icon|logo|flag|sign|browse_information|camera_font|gender|kanji|map|crest|svg|button|arrow|stub|star|chibi|legend|banner|title_card|wallpaper|outline|lineart|logo_wiki|_wiki\.png)/i;
 
 function classifyUrl(url: string, index: number, name: string): GalleryImage {
   const lower = url.toLowerCase();

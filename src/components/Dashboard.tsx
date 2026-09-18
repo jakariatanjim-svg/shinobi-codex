@@ -205,7 +205,7 @@ export function Dashboard({
         <section className="relative overflow-hidden rounded-3xl border border-shinobi-500/25 bg-gradient-to-br from-ink-900/95 via-ink-950 to-ink-900/90 p-5 sm:p-7">
           <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-shinobi-500/15 blur-3xl" />
           <SectionTitle
-            kicker="v3.0 Manga Canon Update"
+            kicker="v3.5 Manga Canon Update"
             title="Boruto: Two Blue Vortex"
             subtitle="Timeskip shinobi, Shinjutsu cyborgs (Eida, Daemon, Kashin Koji, Code) and the sentient Divine Trees / Shinju (Jura, Hidari, Matsuri, Ryū, Mamushi) with manga artwork and updated jutsu."
             right={

@@ -78,7 +78,15 @@ export function SmartImage({ src, alt, name, width = 400, className, eager }: Sm
            because Fandom does not send CORS headers and the browser would
            refuse the response entirely. */
         referrerPolicy="no-referrer"
-        onLoad={() => setLoaded(true)}
+        onLoad={(event) => {
+          // Reject proxy error graphics / 1px placeholders and try the next source
+          if (event.currentTarget.naturalWidth > 0 && event.currentTarget.naturalWidth < 24) {
+            setLoaded(false);
+            setStage((prev) => prev + 1);
+            return;
+          }
+          setLoaded(true);
+        }}
         onError={() => {
           setLoaded(false);
           setStage((prev) => prev + 1);
