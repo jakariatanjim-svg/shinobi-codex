@@ -1,4 +1,4 @@
-/* Shinobi Codex v3.6 — application shell (full-page character view, QoL & accessibility polish) */
+/* Shinobi Codex v3.7 — application shell (random character QOL + full-page detail view) */
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { LoadingScreen } from "./components/LoadingScreen";
@@ -74,6 +74,14 @@ export default function App() {
     setOpenId(character.id);
   }, []);
 
+  /* v3.7: summon a random shinobi from the full databook. */
+  const pickRandom = useCallback(() => {
+    const list = data.characters;
+    if (!list.length) return;
+    const pick = list[Math.floor(Math.random() * list.length)];
+    if (pick) setOpenId(pick.id);
+  }, [data.characters]);
+
   const go = useCallback((next: ViewId) => {
     setView(next);
     setOpenId(null);
@@ -146,6 +154,7 @@ export default function App() {
         clanNames={clanNames}
         villageNames={villageNames}
         onPick={handleSearch}
+        onRandom={pickRandom}
         onRefresh={refresh}
         count={data.characters.length}
         syncing={syncing}
@@ -262,7 +271,7 @@ export default function App() {
       <footer className="mt-16 border-t border-white/6 py-8 text-center text-xs text-slate-500">
         <div className="mx-auto flex max-w-[1700px] flex-col items-center justify-between gap-3 px-4 sm:flex-row sm:px-6 lg:px-8">
           <p className="font-display uppercase tracking-[0.28em] text-slate-400">
-            Shinobi Codex · v3.6 — Naruto, Shippūden & Boruto: Two Blue Vortex Databook
+            Shinobi Codex · v3.7 — Naruto, Shippūden & Boruto: Two Blue Vortex Databook
           </p>
           <p className="text-[0.68rem] text-slate-600">
             Multi-Source Visual Archive (Fandom MediaWiki · AniList · Dattebayo) · Offline IndexedDB Cache

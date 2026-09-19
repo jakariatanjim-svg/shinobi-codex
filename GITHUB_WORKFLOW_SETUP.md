@@ -1,11 +1,3 @@
-# Shinobi Codex — GitHub Actions workflow (paste once, auto everything)
-#
-# - Builds on every push to main
-# - Creates a GitHub Release with dist/index.html attached (no manual zip download)
-# - Version is read automatically from RELEASE_NOTES.md's "vX.Y" line
-# - Release body includes that version, run number, commit info,
-#   plus GitHub's auto-generated changelog. No future edits needed.
-
 name: Build & Release
 
 on:

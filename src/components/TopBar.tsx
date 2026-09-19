@@ -1,4 +1,4 @@
-/* Shinobi Codex v3.6 — top navigation, global search, sync state (QoL & a11y polish) */
+/* Shinobi Codex v3.7 — top navigation, global search, random picker & sync state */
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { VIEWS, type ViewId } from "../lib/nav";
@@ -22,6 +22,7 @@ interface TopBarProps {
   clanNames: string[];
   villageNames: string[];
   onPick: (target: SearchTarget) => void;
+  onRandom?: () => void;   // v3.7 — random character picker
   onRefresh: () => void;
   count: number;
   syncing: boolean;
@@ -34,6 +35,7 @@ export function TopBar({
   clanNames,
   villageNames,
   onPick,
+  onRandom,
   onRefresh,
   count,
   syncing,
@@ -133,7 +135,7 @@ export function TopBar({
                 Shinobi Codex
               </span>
               <span className="block text-[0.62rem] uppercase tracking-[0.34em] text-slate-500">
-                Naruto & Two Blue Vortex · v3.6
+                Naruto & Two Blue Vortex · v3.7
               </span>
             </span>
           </button>
@@ -224,6 +226,17 @@ export function TopBar({
               <span className={cn("h-1.5 w-1.5 rounded-full", syncing ? "bg-chakra-500 animate-pulse-soft" : "bg-emerald-400")} />
               {syncing ? "Syncing" : `${formatNumber(count)} records`}
             </span>
+            {onRandom && (
+              <IconButton title="Summon a random shinobi" onClick={onRandom}>
+                {/* dice icon */}
+                <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                  <rect x="3" y="3" width="18" height="18" rx="3.5" />
+                  <circle cx="8.2" cy="8.2" r="1.35" fill="currentColor" stroke="none" />
+                  <circle cx="12" cy="12" r="1.35" fill="currentColor" stroke="none" />
+                  <circle cx="15.8" cy="15.8" r="1.35" fill="currentColor" stroke="none" />
+                </svg>
+              </IconButton>
+            )}
             <IconButton title="Re-sync with the Dattebayo archive" onClick={onRefresh} busy={syncing}>
               <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M21 12a9 9 0 11-3.2-6.9" />

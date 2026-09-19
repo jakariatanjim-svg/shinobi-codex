@@ -10,7 +10,7 @@ Academy days of Part I to the current **Two Blue Vortex** era of Boruto.
 [![Live Demo](https://img.shields.io/badge/🍥_LIVE-shinobicodex.jakariatanjim.workers.dev-F38020?style=for-the-badge&logo=cloudflare&logoColor=white)](https://shinobicodex.jakariatanjim.workers.dev/)
 
 [![Build](https://github.com/jakariatanjim-svg/shinobi-codex/actions/workflows/build.yml/badge.svg)](https://github.com/jakariatanjim-svg/shinobi-codex/actions/workflows/build.yml)
-[![Version](https://img.shields.io/badge/version-3.6-red)](RELEASE_NOTES.md)
+[![Version](https://img.shields.io/badge/version-3.7-red)](RELEASE_NOTES.md)
 [![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=white)](https://react.dev)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.9-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org)
 [![Vite](https://img.shields.io/badge/Vite-7-646CFF?logo=vite&logoColor=white)](https://vite.dev)
@@ -130,7 +130,7 @@ src/
 ├── main.tsx         # entry point
 └── index.css        # Tailwind + theme
 build.bat            # one-click local build (Windows)
-RELEASE_NOTES.md     # latest release (v3.6) update info
+RELEASE_NOTES.md     # latest release (v3.7) update info
 ```
 
 ## 🙏 Credits
