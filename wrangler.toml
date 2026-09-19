@@ -1,0 +1,15 @@
+#:schema node_modules/wrangler/config-schema.json
+
+# Shinobi Codex — Cloudflare Workers deployment (static assets)
+# Live: https://shinobicodex.jakariatanjim.workers.dev/
+
+name = "shinobicodex"
+compatibility_date = "2026-09-17"
+
+# The Vite build (vite-plugin-singlefile) outputs a self-contained dist/index.html —
+# serve the whole dist folder as static assets. No Worker script needed.
+[assets]
+directory = "./dist"
+
+[observability]
+enabled = true

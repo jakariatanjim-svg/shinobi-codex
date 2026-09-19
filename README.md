@@ -1,42 +1,75 @@
-# Shinobi Codex v3.5
+<div align="center">
 
-> **Naruto · Naruto Shippūden · Boruto: Two Blue Vortex — Character Database & Databook**
+# SHINOBI CODEX
 
-A fast, offline-capable character codex spanning the entire Naruto saga — from the Academy days of Part I to the current **Two Blue Vortex** era of Boruto. Built with React 19, TypeScript, Vite and Tailwind CSS 4, powered by the [Dattebayo API](https://dattebayo-api.onrender.com) with an IndexedDB offline cache.
+**Naruto · Naruto Shippūden · Boruto: Two Blue Vortex — Character Database & Databook**
+
+A fast, offline-capable character codex spanning the entire Naruto saga — from the
+Academy days of Part I to the current **Two Blue Vortex** era of Boruto.
+
+[![Live Demo](https://img.shields.io/badge/🍥_LIVE-shinobicodex.jakariatanjim.workers.dev-F38020?style=for-the-badge&logo=cloudflare&logoColor=white)](https://shinobicodex.jakariatanjim.workers.dev/)
+
+[![Build & Deploy](https://github.com/jakariatanjim-svg/shinobi-codex/actions/workflows/deploy.yml/badge.svg)](https://github.com/jakariatanjim-svg/shinobi-codex/actions/workflows/deploy.yml)
+[![Version](https://img.shields.io/badge/version-3.5-red)](CHANGELOG.md)
+[![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=white)](https://react.dev)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.9-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org)
+[![Vite](https://img.shields.io/badge/Vite-7-646CFF?logo=vite&logoColor=white)](https://vite.dev)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind-4-38BDF8?logo=tailwindcss&logoColor=white)](https://tailwindcss.com)
+
+[Features](#-features) · [Changelog](CHANGELOG.md) · [Getting Started](#-getting-started) · [Deployment](#%EF%B8%8F-deployment-cicd)
+
+</div>
 
 ---
 
-## What's New in v3.5
+## 📖 About
 
-- **Two Blue Vortex canon merge** — new TBV-era characters (Hidari, Jura, Himawari's new form and more) are folded directly into the main databook alongside classic entries.
-- **Multi-image galleries** — characters now carry expanded image sets with era-specific artwork (Part I, Part II, War Arc, Boruto, Two Blue Vortex) and graceful fallback images when a source is unavailable.
-- **Authored era timelines** — curated character version histories (Academy → Genin → Sage Mode → Six Paths → Hokage → Baryon Mode) with a per-era **Chakra Index** power rating, context and technique notes.
-- **Cache overhaul (`codex-v3.5`)** — new cache version invalidates every stale IndexedDB snapshot so image-casing fixes and new fields reach users who already have data stored locally.
-- **Single-load databook** — the full dataset is fetched once, cached for 12 hours, and shared across every view for instant navigation afterwards.
-- **Version history** — continued refinement of the v3.0 era-timeline engine with TBV updates layered on top.
+**Shinobi Codex** is a fan-built databook for the Naruto universe. It pulls the full character dataset from the
+[Dattebayo API](https://dattebayo-api.onrender.com), merges in **Two Blue Vortex** manga canon, caches everything
+locally for offline use, and presents it through a suite of browsable views — characters, clans, villages,
+kekkei genkai, teams, tailed beasts and more — plus authored **era timelines** that chart each major character's
+power growth from academy dropout to god-tier.
 
-## Features
+- 🍥 **Live:** [shinobicodex.jakariatanjim.workers.dev](https://shinobicodex.jakariatanjim.workers.dev/)
+- 📦 **Single-file build** — the entire app compiles to one self-contained HTML file via `vite-plugin-singlefile`
+- 🔌 **Offline-first** — IndexedDB snapshot caching with a 12-hour staleness window
+- 📰 **Release notes** — see [CHANGELOG.md](CHANGELOG.md)
 
-- **Characters View** — searchable, filterable grid of every shinobi across all eras, with rank precedence (Kage → Jōnin → Chūnin → Genin → Academy Student) and affiliation filters.
-- **Character Detail** — full profile pages: jutsu, nature types, kekkei genkai, affiliations, images and era timelines.
-- **Versions View** — canonical form-by-form timelines with Chakra Index progression from academy student to peak forms like Baryon Mode, Perfect Susanoo and True Ōtsutsuki Vessel.
-- **Compare View** — side-by-side stat and ability comparison between any two characters.
-- **Clans View** — clan breakdowns with member rosters, kekkei genkai, village affiliations and average/peak strength stats.
-- **Dashboard** — databook-wide analytics: village strength rankings, clan stats and power distribution.
-- **Offline-first** — IndexedDB snapshot caching with a 12-hour staleness window and concurrent batched fetching.
-- **Online Hosted** — https://shinobicodex.jakariatanjim.workers.dev/
+## ✨ Features
 
-## Tech Stack
+### 🥷 Databook Views
+| View | Description |
+| ---- | ----------- |
+| **Characters** | Faceted shinobi browser — search, filter by village/clan/rank/era, sort by Chakra Index |
+| **Character Dossier** | Full-page profile: jutsu, nature types, affiliations, multi-image era gallery |
+| **Versions / Era Timelines** | Canonical form-by-form progression with per-era Chakra Index, context & technique notes |
+| **Clans** | Clan archive with rosters, kekkei genkai, leaderboards & average/peak strength stats |
+| **Collectives** | Villages, Kekkei Genkai, Teams, Tailed Beasts, Akatsuki & Kara archives |
+| **Compare** | Head-to-head chakra analysis between any two characters |
+| **Dashboard** | Databook-wide analytics — village rankings, clan stats, power distribution |
 
-| Layer    | Technology                                             |
-| -------- | ------------------------------------------------------ |
-| UI       | React 19 + TypeScript                                  |
-| Styling  | Tailwind CSS 4 (`@tailwindcss/vite`)                   |
-| Build    | Vite 7 (`vite-plugin-singlefile`)                      |
-| Data     | Dattebayo API — characters, clans, villages & more     |
-| Storage  | IndexedDB offline cache (versioned snapshots)          |
+### ⚡ Data Engine
+- **Dattebayo API client** — batched concurrent fetching (4×) with request timeouts
+- **IndexedDB offline cache** — versioned snapshots (`codex-v3.5`), stale-after-12h invalidation
+- **Two Blue Vortex merge** — TBV canon characters & enrichments folded into one dataset
+- **Multi-source image engine** — era-matched artwork with verified fallbacks (Part I → Two Blue Vortex)
+- **Rank precedence** — Kage → Jōnin → Chūnin → Genin → Academy Student
 
-## Getting Started
+## 🛠️ Tech Stack
+
+| Layer | Technology |
+| ----- | ---------- |
+| UI | React 19 + TypeScript |
+| Styling | Tailwind CSS 4 (`@tailwindcss/vite`) |
+| Build | Vite 7 + `vite-plugin-singlefile` |
+| Data | Dattebayo API — characters, clans, villages, teams & more |
+| Storage | IndexedDB offline cache |
+| Hosting | Cloudflare Workers (static assets) |
+| CI/CD | GitHub Actions → Wrangler deploy |
+
+## 🚀 Getting Started
+
+**Requirements:** Node.js 20+ and npm.
 
 ```bash
 # install dependencies
@@ -45,34 +78,68 @@ npm install
 # start the dev server
 npm run dev
 
-# production build
+# production build → dist/
 npm run build
 
 # preview the production build
 npm run preview
 ```
 
-On Windows you can also run `build.bat` for a one-click production build.
+> **Windows:** double-click [`build.bat`](build.bat) for a one-click local production build.
 
-## Project Structure
+## ☁️ Deployment (CI/CD)
+
+The site is deployed to **Cloudflare Workers** automatically by
+[`.github/workflows/deploy.yml`](.github/workflows/deploy.yml):
+
+- **Every push & PR** → build is validated (`npm ci` + `npm run build`), `dist/` uploaded as an artifact
+- **`main` branch** → after a successful build, deployed via [`wrangler-action`](https://github.com/cloudflare/wrangler-action) to `shinobicodex` Workers
+
+**One-time setup** — add these secrets in **Settings → Secrets and variables → Actions**:
+
+| Secret | Where to find it |
+| ------ | ---------------- |
+| `CLOUDFLARE_API_TOKEN` | Cloudflare dash → *My Profile → API Tokens* → create with the **Edit Cloudflare Workers** template |
+| `CLOUDFLARE_ACCOUNT_ID` | Cloudflare dash → Workers & Pages → Overview (right sidebar) |
+
+Manual deploy (optional):
+
+```bash
+npm run build        # produces dist/
+npx wrangler deploy  # uses wrangler.toml
+```
+
+## 📁 Project Structure
 
 ```
+.github/workflows/   # deploy.yml — GitHub Actions build & deploy
 src/
-├── components/      # CharactersView, ClansView, CompareView,
-│                    # Dashboard, VersionsView, CharacterDetail,
-│                    # CharacterCard, TopBar, LoadingScreen, ui
-├── hooks/           # useDatabook — dataset loading & merge pipeline
-├── lib/             # api (Dattebayo client + IndexedDB cache),
-│                    # versions, tbvData, fallbackImages, eras,
-│                    # ranks, filters, derive, imageSources, query,
-│                    # nav, actions, types, useHorizontalScroll
+├── components/      # CharactersView, CharacterDetail, VersionsView, ClansView,
+│                    # CollectiveViews, CompareView, Dashboard, CharacterCard,
+│                    # TopBar, LoadingScreen, ui primitives
+├── hooks/           # useDatabook — dataset loading, TBV merge & gallery pipeline
+├── lib/             # api (Dattebayo client + IndexedDB cache), versions,
+│                    # tbvData, fallbackImages, eras, imageSources, ranks,
+│                    # filters, query, derive, nav, actions, types,
+│                    # useHorizontalScroll
 ├── utils/           # cn() classname helper
-├── App.tsx          # root app
-└── main.tsx         # entry point
+├── App.tsx          # application shell
+├── main.tsx         # entry point
+└── index.css        # Tailwind + theme
+wrangler.toml        # Cloudflare Workers static-assets config
+build.bat            # one-click local build (Windows)
+CHANGELOG.md         # release history
 ```
 
-## Credits
+## 🙏 Credits
 
-- Character data: [Dattebayo API](https://dattebayo-api.onrender.com)
-- Artwork: Naruto wiki sources, with curated era-specific fallbacks
-- Series canon: *Naruto* / *Naruto Shippūden* / *Boruto: Naruto Next Generations* / *Two Blue Vortex*
+- **Character data:** [Dattebayo API](https://dattebayo-api.onrender.com)
+- **Artwork:** Naruto wiki sources, with curated era-specific fallbacks
+- **Series:** *Naruto* · *Naruto Shippūden* · *Boruto: Naruto Next Generations* · *Boruto: Two Blue Vortex*
+- Fan project for educational purposes — not affiliated with the rights holders.
+
+---
+
+<div align="center">
+<sub>Built with the will of fire 🔥 — <a href="CHANGELOG.md">release history</a></sub>
+</div>
