@@ -293,6 +293,96 @@ select {
   font-variant-numeric: tabular-nums;
 }
 
+/* ------------------------------------------------------------------ */
+/* v3.6 — polish, accessibility & QoL layer                            */
+/* ------------------------------------------------------------------ */
+
+:root {
+  color-scheme: dark;
+  accent-color: var(--color-chakra-500);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* Focus-visible ring — appears for keyboard users, not mouse clicks. */
+:focus-visible {
+  outline: 2px solid var(--color-chakra-500);
+  outline-offset: 2px;
+  border-radius: 0.5rem;
+}
+
+select:focus-visible,
+input:focus-visible,
+button:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid var(--color-chakra-500);
+  outline-offset: 2px;
+}
+
+/* Micro-press feedback — subtle scale-down on any active press. */
+.chip-button:active,
+button:active:not(:disabled) {
+  transform: scale(0.96);
+}
+
+/* Smoother transitions on chips / nav / cards. */
+.chip {
+  transition: all 0.18s ease, transform 0.12s ease;
+}
+
+.shinobi-card {
+  transition: transform 0.32s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.32s ease, border-color 0.28s ease;
+}
+
+/* Scrollbar styling (thin, themed) for scrollable regions. */
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.14);
+  border: 3px solid transparent;
+  border-radius: 999px;
+  background-clip: content-box;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 157, 61, 0.45);
+  background-clip: content-box;
+}
+
+/* Rapid scroll-rail thumb hide for the wheel-driven horizontal rails. */
+.scroll-rail {
+  scrollbar-width: none;
+}
+
+/* Cursor affordances. */
+.chip-button {
+  cursor: pointer;
+}
+
+img {
+  user-select: none;
+}
+
+/* Better disabled state (hint of unavailability). */
+:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+/* Subtle image-render crispness for artwork as it fades in. */
+img[decoding="async"] {
+  image-rendering: -webkit-optimize-contrast;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -300,5 +390,6 @@ select {
     animation-duration: 0.001ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
   }
 }

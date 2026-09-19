@@ -2,7 +2,7 @@
 
 # ✦ Shinobi Codex — Release Notes
 
-### 🍥 v3.5 — *"Two Blue Vortex Overhaul"* · 2026-09-18
+### 🍥 v3.6 — *"Polish & QoL Pass"* · 2026-09-19
 
 [![Live](https://img.shields.io/badge/🍥_Live-shinobicodex.jakariatanjim.workers.dev-F38020?logo=cloudflare&logoColor=white)](https://shinobicodex.jakariatanjim.workers.dev/)
 
@@ -10,27 +10,31 @@
 
 ---
 
-## 🆕 What's New in v3.5
+## 🆕 What's New in v3.6
+
+This release is a **quality-of-life and polish pass** — no new data, just a smoother,
+faster-feeling and more accessible databook across every view.
 
 | | Update | Details |
 |---|---|---|
-| 🌀 | **Two Blue Vortex Canon Merge** | TBV-era characters and canon updates (Hidari, Jura & more) are merged directly into the main databook during the single dataset load — no separate view needed. |
-| 🖼️ | **Verified Multi-Image Era Galleries** | Every character now carries an expanded image archive with era-matched artwork — Part I, Part II, War Arc, Boruto and Two Blue Vortex — with verified fallbacks when a source image fails. |
-| ⏳ | **Universal Era Timelines** | Timeline entries across all major characters now ship with era-matched imagery, not just the authored ones. |
-| 💾 | **Cache Overhaul (`codex-v3.5`)** | IndexedDB cache version bumped — every stale snapshot is invalidated so image-casing fixes and new fields reach users with pre-existing local data. |
-| 🖱️ | **PC Mouse-Wheel Rails** | Global wheel support for horizontal era & image rails on desktop browsers. |
-| 🧭 | **Full-Page Dossier Shell** | The app is now framed as a full-page character dossier with deep Two Blue Vortex integration throughout. |
+| ⌨️ | **`/` Keyboard Shortcut** | Press ` / ` anywhere to instantly jump into global search — works from any view (hints shown inside the search box). |
+| 🔘 | **Polished Icon Buttons** | New round `IconButton` for the sync/re-sync control: 44px hit target, press-scale feedback, focus ring and a built-in spinner while syncing. |
+| 🖱️ | **Micro-Interactions** | Subtle press-scale on every button and chip, snappier transitions across cards, chips and nav for a more responsive feel. |
+| ♿ | **Accessibility Upgrades** | Full `focus-visible` keyboard rings (chakra-orange), ARIA labels + `aria-pressed` states on interactive chips, and `prefers-reduced-motion` honoured app-wide. |
+| 🖌️ | **Themed Scrollbars** | Thin dark scrollbars with a chakra-orange hover accent in every scrollable region. |
+| 🔍 | **Search UX Refinements** | The `/` key focuses the field, Escape dismisses, and the clear button is larger with a proper hover/label state. |
 
 ---
 
-## ⚡ Improvement Highlights
+## ⚡ Under the Hood
 
-- 📦 **Single-load databook** — the full dataset is fetched once, cached for **12 hours**, and shared across Characters, Clans, Collectives, Versions, Compare and Dashboard for instant navigation.
-- 🔌 **Offline-first** — versioned IndexedDB snapshots keep the codex usable without a connection.
-- 🎨 **Smarter image engine** — multi-source resolution with per-era fallbacks, casing fixes included.
+- Shared `Kbd` and `IconButton` primitives added to the design system
+- `color-scheme: dark` + chakra accent color set globally for native UI
+- Better disabled-state affordances across the app
+- Zero new runtime dependencies — polish is pure CSS + tiny React helpers
 
 ---
 
 <div align="center">
-<sub>🔥 Full release history lives in <a href="https://github.com/jakariatanjim-svg/shinobi-codex/releases">GitHub Releases</a></sub>
+<sub>🔥 Previous release: v3.5 *"Two Blue Vortex Overhaul"* · Full history in <a href="https://github.com/jakariatanjim-svg/shinobi-codex/releases">GitHub Releases</a></sub>
 </div>

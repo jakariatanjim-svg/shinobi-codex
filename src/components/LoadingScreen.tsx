@@ -36,7 +36,7 @@ export function LoadingScreen({ state, onRetry }: { state: LoadState; onRetry: (
       </div>
 
       <p className="font-display text-[0.7rem] font-semibold uppercase tracking-[0.5em] text-chakra-500">
-        Shinobi Codex · v3.5
+        Shinobi Codex · v3.6
       </p>
       <h1 className="mt-3 font-display text-3xl font-bold uppercase tracking-[0.12em] text-white sm:text-4xl">
         {failed ? "Summoning failed" : "Unsealing the databook"}

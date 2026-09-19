@@ -1,4 +1,4 @@
-/* Shinobi Codex v1.0 — shared UI primitives */
+/* Shinobi Codex v3.6 — shared UI primitives (polish, a11y & QoL upgrades) */
 
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { cn } from "../utils/cn";
@@ -127,6 +127,7 @@ export function Chip({
     <button
       type="button"
       title={title}
+      aria-pressed={onClick ? Boolean(active) : undefined}
       onClick={onClick}
       style={style}
       className={cn("chip", onClick && "chip-button", active && "chip-active", className)}
@@ -233,6 +234,73 @@ export function EmptyState({ title, hint }: { title: string; hint?: string }) {
 
 export function Skeleton({ className }: { className?: string }) {
   return <div className={cn("shimmer-line rounded-lg", className)} />;
+}
+
+/* ------------------------------------------------------------------ */
+/* v3.6 — QoL / accessibility helpers                                  */
+/* ------------------------------------------------------------------ */
+
+/** Kbd — keyboard-hint chip, hidden on touch devices. */
+export function Kbd({ children, className }: { children: ReactNode; className?: string }) {
+  return (
+    <kbd
+      className={cn(
+        "pointer-events-none hidden select-none rounded border border-white/15 bg-white/5 px-1.5 py-0.5 " +
+          "font-sans text-[0.6rem] font-semibold tracking-widest text-slate-400 sm:inline-block",
+        className,
+      )}
+    >
+      {children}
+    </kbd>
+  );
+}
+
+export interface IconButtonProps {
+  title: string;
+  onClick?: () => void;
+  active?: boolean;
+  disabled?: boolean;
+  className?: string;
+  children: ReactNode;
+  busy?: boolean;
+}
+
+/** IconButton — 44px hit-area, scaled press feedback, focus-visible ring. */
+export function IconButton({
+  title,
+  onClick,
+  active,
+  disabled,
+  className,
+  children,
+  busy,
+}: IconButtonProps) {
+  return (
+    <button
+      type="button"
+      title={title}
+      aria-label={title}
+      aria-pressed={active}
+      disabled={disabled || busy}
+      onClick={onClick}
+      className={cn(
+        "relative grid h-10 w-10 shrink-0 place-items-center rounded-full border text-sm transition-all",
+        "active:scale-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-chakra-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-ink-950",
+        "disabled:pointer-events-none disabled:opacity-40",
+        busy && "cursor-wait",
+        active
+          ? "border-chakra-500/70 bg-chakra-500/15 text-chakra-300"
+          : "border-white/10 bg-white/3 text-slate-400 hover:border-chakra-500/60 hover:text-chakra-300",
+        className,
+      )}
+    >
+      {busy ? (
+        <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/20 border-t-chakra-400" />
+      ) : (
+        children
+      )}
+    </button>
+  );
 }
 
 export function SortSelect<T extends string>({

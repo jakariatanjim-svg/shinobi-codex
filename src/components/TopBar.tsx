@@ -1,11 +1,11 @@
-/* Shinobi Codex v1.0 — top navigation, global search, sync state */
+/* Shinobi Codex v3.6 — top navigation, global search, sync state (QoL & a11y polish) */
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { VIEWS, type ViewId } from "../lib/nav";
 import { cn } from "../utils/cn";
 import { formatNumber, powerOf, primaryVillage, shortName, themeFor } from "../lib/derive";
 import type { Character } from "../lib/types";
-import { SmartImage } from "./ui";
+import { SmartImage, IconButton, Kbd } from "./ui";
 
 export interface SearchTarget {
   kind: "character" | "clan" | "village";
@@ -42,6 +42,23 @@ export function TopBar({
   const [open, setOpen] = useState(false);
   const [cursor, setCursor] = useState(0);
   const boxRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  /* v3.6: press "/" anywhere to focus search (skip when typing in a field). */
+  useEffect(() => {
+    const onKey = (event: KeyboardEvent) => {
+      const target = event.target as HTMLElement | null;
+      const inField =
+        target && (target.tagName === "INPUT" || target.tagName === "TEXTAREA" || target.tagName === "SELECT" || target.isContentEditable);
+      if (event.key === "/" && !inField) {
+        event.preventDefault();
+        inputRef.current?.focus();
+        setOpen(true);
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
 
   const results = useMemo<SearchTarget[]>(() => {
     const q = query.trim().toLowerCase();
@@ -116,7 +133,7 @@ export function TopBar({
                 Shinobi Codex
               </span>
               <span className="block text-[0.62rem] uppercase tracking-[0.34em] text-slate-500">
-                Naruto & Two Blue Vortex · v3.5
+                Naruto & Two Blue Vortex · v3.6
               </span>
             </span>
           </button>
@@ -133,6 +150,7 @@ export function TopBar({
                 <path d="M20 20l-3.6-3.6" />
               </svg>
               <input
+                ref={inputRef}
                 value={query}
                 onChange={(event) => {
                   setQuery(event.target.value);
@@ -157,17 +175,20 @@ export function TopBar({
                 placeholder="Search shinobi, clans, villages…"
                 className="w-full bg-transparent text-sm text-slate-100 placeholder:text-slate-600 focus:outline-none"
               />
-              {query && (
+              {query ? (
                 <button
                   type="button"
+                  aria-label="Clear search"
                   onClick={() => {
                     setQuery("");
                     setOpen(false);
                   }}
-                  className="text-xs text-slate-500 hover:text-white"
+                  className="grid h-5 w-5 shrink-0 place-items-center rounded-full text-xs text-slate-500 transition-colors hover:bg-white/10 hover:text-white"
                 >
                   ✕
                 </button>
+              ) : (
+                <Kbd>/</Kbd>
               )}
             </div>
 
@@ -203,23 +224,12 @@ export function TopBar({
               <span className={cn("h-1.5 w-1.5 rounded-full", syncing ? "bg-chakra-500 animate-pulse-soft" : "bg-emerald-400")} />
               {syncing ? "Syncing" : `${formatNumber(count)} records`}
             </span>
-            <button
-              type="button"
-              onClick={onRefresh}
-              title="Re-sync with the Dattebayo archive"
-              className="rounded-full border border-white/10 bg-white/3 p-2 text-slate-400 transition-colors hover:border-chakra-500/60 hover:text-chakra-400"
-            >
-              <svg
-                viewBox="0 0 24 24"
-                className={cn("h-4 w-4", syncing && "animate-spin")}
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-              >
+            <IconButton title="Re-sync with the Dattebayo archive" onClick={onRefresh} busy={syncing}>
+              <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M21 12a9 9 0 11-3.2-6.9" />
                 <path d="M21 3v6h-6" />
               </svg>
-            </button>
+            </IconButton>
           </div>
         </div>
 

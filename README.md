@@ -10,7 +10,7 @@ Academy days of Part I to the current **Two Blue Vortex** era of Boruto.
 [![Live Demo](https://img.shields.io/badge/🍥_LIVE-shinobicodex.jakariatanjim.workers.dev-F38020?style=for-the-badge&logo=cloudflare&logoColor=white)](https://shinobicodex.jakariatanjim.workers.dev/)
 
 [![Build](https://github.com/jakariatanjim-svg/shinobi-codex/actions/workflows/build.yml/badge.svg)](https://github.com/jakariatanjim-svg/shinobi-codex/actions/workflows/build.yml)
-[![Version](https://img.shields.io/badge/version-3.5-red)](RELEASE_NOTES.md)
+[![Version](https://img.shields.io/badge/version-3.6-red)](RELEASE_NOTES.md)
 [![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=white)](https://react.dev)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.9-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org)
 [![Vite](https://img.shields.io/badge/Vite-7-646CFF?logo=vite&logoColor=white)](https://vite.dev)
@@ -95,7 +95,7 @@ The site is hosted on **Cloudflare Workers** and deployed **manually** by upload
 | Option | How |
 | ------ | --- |
 | **Local build** | Run `build.bat` (Windows) or `npm ci && npm run build` → upload `dist/` to Cloudflare |
-| **GitHub Actions** | Builds on every push and stores `dist/` as a downloadable **artifact** |
+| **GitHub Actions** | Builds automatically on every push → creates a **GitHub Release** with `index.html` attached (no zip) — version auto-read from `RELEASE_NOTES.md` |
 
 ### 🐙 Set up GitHub Actions (one-time)
 
@@ -107,9 +107,10 @@ GitHub does **not** let you upload files into `.github/workflows/` directly, so 
 4. **Copy everything** from [`GITHUB_WORKFLOW_SETUP.md`](GITHUB_WORKFLOW_SETUP.md) and **paste** it into the editor
 5. **Commit changes** → done
 
-✅ **Result:** every push to `main` gets a green build check, and you can download the
-`dist` artifact from any run in the Actions tab to publish manually. No Cloudflare-GitHub
-connection needed.
+✅ **Result:** every push to `main` automatically builds and creates a **GitHub Release** with
+`dist/index.html` attached directly (no zip extraction).
+The release version is pulled automatically from `RELEASE_NOTES.md`'s `vX.Y` line, and GitHub
+append's the auto-generated PR/commit changelog below it. Just download and upload to Cloudflare.
 
 ## 📁 Project Structure
 
@@ -129,7 +130,7 @@ src/
 ├── main.tsx         # entry point
 └── index.css        # Tailwind + theme
 build.bat            # one-click local build (Windows)
-RELEASE_NOTES.md     # latest release (v3.5) update info
+RELEASE_NOTES.md     # latest release (v3.6) update info
 ```
 
 ## 🙏 Credits
