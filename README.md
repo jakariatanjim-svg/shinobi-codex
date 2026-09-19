@@ -9,14 +9,14 @@ Academy days of Part I to the current **Two Blue Vortex** era of Boruto.
 
 [![Live Demo](https://img.shields.io/badge/🍥_LIVE-shinobicodex.jakariatanjim.workers.dev-F38020?style=for-the-badge&logo=cloudflare&logoColor=white)](https://shinobicodex.jakariatanjim.workers.dev/)
 
-[![Build & Deploy](https://github.com/jakariatanjim-svg/shinobi-codex/actions/workflows/deploy.yml/badge.svg)](https://github.com/jakariatanjim-svg/shinobi-codex/actions/workflows/deploy.yml)
-[![Version](https://img.shields.io/badge/version-3.5-red)](CHANGELOG.md)
+[![Build](https://github.com/jakariatanjim-svg/shinobi-codex/actions/workflows/build.yml/badge.svg)](https://github.com/jakariatanjim-svg/shinobi-codex/actions/workflows/build.yml)
+[![Version](https://img.shields.io/badge/version-3.5-red)](RELEASE_NOTES.md)
 [![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=white)](https://react.dev)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.9-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org)
 [![Vite](https://img.shields.io/badge/Vite-7-646CFF?logo=vite&logoColor=white)](https://vite.dev)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-4-38BDF8?logo=tailwindcss&logoColor=white)](https://tailwindcss.com)
 
-[Features](#-features) · [Changelog](CHANGELOG.md) · [Getting Started](#-getting-started) · [Deployment](#%EF%B8%8F-deployment-cicd)
+[Features](#-features) · [Release Notes](RELEASE_NOTES.md) · [Getting Started](#-getting-started) · [Deployment](#%EF%B8%8F-deployment-cicd)
 
 </div>
 
@@ -33,7 +33,7 @@ power growth from academy dropout to god-tier.
 - 🍥 **Live:** [shinobicodex.jakariatanjim.workers.dev](https://shinobicodex.jakariatanjim.workers.dev/)
 - 📦 **Single-file build** — the entire app compiles to one self-contained HTML file via `vite-plugin-singlefile`
 - 🔌 **Offline-first** — IndexedDB snapshot caching with a 12-hour staleness window
-- 📰 **Release notes** — see [CHANGELOG.md](CHANGELOG.md)
+- 📰 **Latest update** — see [RELEASE_NOTES.md](RELEASE_NOTES.md)
 
 ## ✨ Features
 
@@ -65,7 +65,7 @@ power growth from academy dropout to god-tier.
 | Data | Dattebayo API — characters, clans, villages, teams & more |
 | Storage | IndexedDB offline cache |
 | Hosting | Cloudflare Workers (static assets) |
-| CI/CD | GitHub Actions → Wrangler deploy |
+| CI | GitHub Actions — build & artifact (see [setup guide](GITHUB_WORKFLOW_SETUP.md)) |
 
 ## 🚀 Getting Started
 
@@ -87,32 +87,34 @@ npm run preview
 
 > **Windows:** double-click [`build.bat`](build.bat) for a one-click local production build.
 
-## ☁️ Deployment (CI/CD)
+## ☁️ Deployment
 
-The site is deployed to **Cloudflare Workers** automatically by
-[`.github/workflows/deploy.yml`](.github/workflows/deploy.yml):
+The site is hosted on **Cloudflare Workers** and deployed **manually** by uploading the
+`dist/` build output.
 
-- **Every push & PR** → build is validated (`npm ci` + `npm run build`), `dist/` uploaded as an artifact
-- **`main` branch** → after a successful build, deployed via [`wrangler-action`](https://github.com/cloudflare/wrangler-action) to `shinobicodex` Workers
+| Option | How |
+| ------ | --- |
+| **Local build** | Run `build.bat` (Windows) or `npm ci && npm run build` → upload `dist/` to Cloudflare |
+| **GitHub Actions** | Builds on every push and stores `dist/` as a downloadable **artifact** |
 
-**One-time setup** — add these secrets in **Settings → Secrets and variables → Actions**:
+### 🐙 Set up GitHub Actions (one-time)
 
-| Secret | Where to find it |
-| ------ | ---------------- |
-| `CLOUDFLARE_API_TOKEN` | Cloudflare dash → *My Profile → API Tokens* → create with the **Edit Cloudflare Workers** template |
-| `CLOUDFLARE_ACCOUNT_ID` | Cloudflare dash → Workers & Pages → Overview (right sidebar) |
+GitHub does **not** let you upload files into `.github/workflows/` directly, so we paste the workflow instead:
 
-Manual deploy (optional):
+1. Go to your repo → **`Actions`** tab (top bar)
+2. On the *"Get started with GitHub Actions"* page, click **« set up a workflow yourself »** (not a template)
+3. Name it **`build.yml`** (GitHub saves it to `.github/workflows/build.yml` automatically)
+4. **Copy everything** from [`GITHUB_WORKFLOW_SETUP.md`](GITHUB_WORKFLOW_SETUP.md) and **paste** it into the editor
+5. **Commit changes** → done
 
-```bash
-npm run build        # produces dist/
-npx wrangler deploy  # uses wrangler.toml
-```
+✅ **Result:** every push to `main` gets a green build check, and you can download the
+`dist` artifact from any run in the Actions tab to publish manually. No Cloudflare-GitHub
+connection needed.
 
 ## 📁 Project Structure
 
 ```
-.github/workflows/   # deploy.yml — GitHub Actions build & deploy
+GITHUB_WORKFLOW_SETUP.md  # GitHub Actions — copy-paste build setup
 src/
 ├── components/      # CharactersView, CharacterDetail, VersionsView, ClansView,
 │                    # CollectiveViews, CompareView, Dashboard, CharacterCard,
@@ -126,9 +128,8 @@ src/
 ├── App.tsx          # application shell
 ├── main.tsx         # entry point
 └── index.css        # Tailwind + theme
-wrangler.toml        # Cloudflare Workers static-assets config
 build.bat            # one-click local build (Windows)
-CHANGELOG.md         # release history
+RELEASE_NOTES.md     # latest release (v3.5) update info
 ```
 
 ## 🙏 Credits
@@ -141,5 +142,5 @@ CHANGELOG.md         # release history
 ---
 
 <div align="center">
-<sub>Built with the will of fire 🔥 — <a href="CHANGELOG.md">release history</a></sub>
+<sub>Built with the will of fire 🔥 — <a href="RELEASE_NOTES.md">latest release notes</a></sub>
 </div>
