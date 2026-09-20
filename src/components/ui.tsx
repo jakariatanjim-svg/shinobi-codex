@@ -1,4 +1,4 @@
-/* Shinobi Codex v3.7 — shared UI primitives (polish, a11y & QoL upgrades) */
+/* Shinobi Codex v3.8 — shared UI primitives (polish, a11y & QoL upgrades) */
 
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { cn } from "../utils/cn";

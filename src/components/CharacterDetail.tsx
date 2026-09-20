@@ -1,4 +1,4 @@
-/* Shinobi Codex v3.0 — Full-Page Shinobi Dossier, Multi-Source Gallery & Embedded Era Timeline */
+/* Shinobi Codex v3.8 — Full-Page Shinobi Dossier, Official Databook Stats, Gallery & Era Timeline */
 
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import type { CategoryDimension } from "../lib/actions";
@@ -29,6 +29,8 @@ import {
 } from "../lib/derive";
 import { eraCountLabel, hasAuthoredTimeline, timelineFor } from "../lib/eras";
 import { useMultiSourceImages } from "../lib/imageSources";
+import { OFFICIAL_MAX_TOTAL, type DatabookRow } from "../lib/officialStats";
+import { useOfficialStats } from "../hooks/useOfficialStats";
 import type { Character } from "../lib/types";
 import { cn } from "../utils/cn";
 import { InfoRow, Meter, Monogram, Pill, SmartImage } from "./ui";
@@ -39,6 +41,7 @@ const TABS = [
   { id: "dossier", label: "Dossier", kanji: "帳" },
   { id: "service", label: "Service", kanji: "務" },
   { id: "power", label: "Power", kanji: "力" },
+  { id: "official", label: "Databook", kanji: "公" },
   { id: "jutsu", label: "Jutsu", kanji: "術" },
   { id: "arsenal", label: "Arsenal", kanji: "具" },
   { id: "family", label: "Family", kanji: "家" },
@@ -70,9 +73,12 @@ export function CharacterDetail({
   const [imageIndex, setImageIndex] = useState(0);
   const [jutsuFilter, setJutsuFilter] = useState("");
   const [activeTab, setActiveTab] = useState<TabId>("timeline");
+  const { stats: official, loading: officialLoading } = useOfficialStats(character.name);
 
   const theme = themeFor(primaryVillage(character));
   const power = powerOf(character);
+  /* v3.8: printed official databook stats override the derived estimate when present. */
+  const displayScore = official ? official.chakraIndex : power.score;
   const safeIndex = Math.min(imageIndex, Math.max(0, gallery.length - 1));
   const currentGalleryItem = gallery[safeIndex] ?? null;
   const currentImg = currentGalleryItem?.url ?? null;
@@ -301,19 +307,29 @@ export function CharacterDetail({
             <div className="mt-4 rounded-2xl border border-white/8 bg-black/35 p-4">
               <div className="flex items-end justify-between">
                 <div>
-                  <p className="text-[0.58rem] uppercase tracking-[0.3em] text-slate-500">Chakra index</p>
+                  <p className="flex items-center gap-2 text-[0.58rem] uppercase tracking-[0.3em] text-slate-500">
+                    Chakra index
+                    {official && (
+                      <span className="rounded border border-emerald-400/40 bg-emerald-400/10 px-1 py-0.5 text-[0.52rem] font-bold tracking-[0.18em] text-emerald-300">
+                        OFFICIAL
+                      </span>
+                    )}
+                  </p>
                   <p className="tabular font-display text-4xl font-bold leading-none" style={{ color: theme.accent }}>
-                    {power.score}
+                    {displayScore}
                   </p>
                 </div>
                 <Pill color={theme.accent}>{power.tier}</Pill>
               </div>
               <div className="mt-2">
-                <Meter value={power.score} color={theme.accent} />
+                <Meter value={displayScore} color={theme.accent} />
               </div>
               <p className="mt-2 text-[0.68rem] leading-relaxed text-slate-500">
-                Derived from {jutsuList.length} recorded techniques, {natures.length} nature transformations, {kekkei.length} kekkei
-                genkai and their highest ninja rank.
+                {official
+                  ? `Printed official stats — ${official.sourceBook}. Total ${official.latest.total}/${OFFICIAL_MAX_TOTAL} (official record max).`
+                  : officialLoading
+                    ? "Consulting the official databook…"
+                    : `Estimated from ${jutsuList.length} recorded techniques, ${natures.length} nature transformations, ${kekkei.length} kekkei genkai and their highest ninja rank (no official databook coverage).`}
               </p>
             </div>
           </div>
@@ -725,6 +741,78 @@ export function CharacterDetail({
                   ))}
                 </ul>
               </div>
+            )}
+          </DetailCard>
+
+          <DetailCard id="official" title="Official Databook Stats" kanji="帳">
+            {officialLoading && !official ? (
+              <p className="text-sm text-slate-500">Consulting the official databook…</p>
+            ) : !official ? (
+              <p className="text-sm text-slate-500">
+                No printed databook coverage for this shinobi — official stats exist only for characters featured in
+                Rin no Sho, Sha no Sho or Tō no Sho. The Chakra Index falls back to the estimate above.
+              </p>
+            ) : (
+              <>
+                <div className="overflow-x-auto scroll-rail">
+                  <table className="w-full min-w-[540px] border-collapse text-left">
+                    <thead>
+                      <tr className="text-[0.6rem] uppercase tracking-[0.16em] text-slate-500">
+                        <th className="pb-2 pr-3 font-semibold">Attribute</th>
+                        {official.rows.map((row) => (
+                          <th key={row.book} className="pb-2 pr-2 font-semibold">
+                            <span className="block">{row.book}</span>
+                            <span className="block text-[0.55rem] normal-case tracking-normal text-slate-600">{row.bookTitle}</span>
+                          </th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {(
+                        [
+                          ["Ninjutsu", "nin"],
+                          ["Taijutsu", "tai"],
+                          ["Genjutsu", "gen"],
+                          ["Intelligence", "int"],
+                          ["Strength", "str"],
+                          ["Speed", "speed"],
+                          ["Stamina", "stamina"],
+                          ["Hand seals", "seals"],
+                        ] as [string, keyof DatabookRow][]
+                      ).map(([label, key]) => (
+                        <tr key={key} className="border-t border-white/5">
+                          <td className="py-1.5 pr-3 text-[0.68rem] uppercase tracking-[0.14em] text-slate-400">{label}</td>
+                          {official.rows.map((row) => (
+                            <td key={row.book} className="py-1.5 pr-2">
+                              <span className="tabular text-sm text-slate-200">{row[key]}</span>
+                              <span className="ml-2 inline-block h-1 w-14 rounded-full bg-white/8 align-middle">
+                                <span
+                                  className="block h-full rounded-full bg-gradient-to-r from-chakra-600 to-chakra-400"
+                                  style={{ width: `${(Number(row[key]) / 5) * 100}%` }}
+                                />
+                              </span>
+                            </td>
+                          ))}
+                        </tr>
+                      ))}
+                      <tr className="border-t border-chakra-500/25">
+                        <td className="py-2 pr-3 text-[0.68rem] font-bold uppercase tracking-[0.14em] text-chakra-400">Total</td>
+                        {official.rows.map((row) => (
+                          <td key={row.book} className="py-2 pr-2">
+                            <span className="tabular font-display text-base font-bold text-white">{row.total}</span>
+                            <span className="text-[0.6rem] text-slate-600"> /{OFFICIAL_MAX_TOTAL} max</span>
+                          </td>
+                        ))}
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <p className="mt-3 text-[0.68rem] leading-relaxed text-slate-500">
+                  Printed values from the official Shueisha databooks ({official.rows.map((row) => row.bookTitle).join(", ")}),
+                  fetched live from the official series wiki — the Chakra Index is the latest total normalised against the
+                  published record of {OFFICIAL_MAX_TOTAL}.
+                </p>
+              </>
             )}
           </DetailCard>
         </div>

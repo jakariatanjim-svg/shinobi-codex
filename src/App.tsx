@@ -1,4 +1,4 @@
-/* Shinobi Codex v3.7 — application shell (random character QOL + full-page detail view) */
+/* Shinobi Codex v3.8 — application shell (official databook stats + random character) */
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { LoadingScreen } from "./components/LoadingScreen";
@@ -74,7 +74,7 @@ export default function App() {
     setOpenId(character.id);
   }, []);
 
-  /* v3.7: summon a random shinobi from the full databook. */
+  /* v3.7+: summon a random shinobi from the full databook. */
   const pickRandom = useCallback(() => {
     const list = data.characters;
     if (!list.length) return;
@@ -271,7 +271,7 @@ export default function App() {
       <footer className="mt-16 border-t border-white/6 py-8 text-center text-xs text-slate-500">
         <div className="mx-auto flex max-w-[1700px] flex-col items-center justify-between gap-3 px-4 sm:flex-row sm:px-6 lg:px-8">
           <p className="font-display uppercase tracking-[0.28em] text-slate-400">
-            Shinobi Codex · v3.7 — Naruto, Shippūden & Boruto: Two Blue Vortex Databook
+            Shinobi Codex · v3.8 — Naruto, Shippūden & Boruto: Two Blue Vortex Databook
           </p>
           <p className="text-[0.68rem] text-slate-600">
             Multi-Source Visual Archive (Fandom MediaWiki · AniList · Dattebayo) · Offline IndexedDB Cache

@@ -10,7 +10,7 @@ Academy days of Part I to the current **Two Blue Vortex** era of Boruto.
 [![Live Demo](https://img.shields.io/badge/🍥_LIVE-shinobicodex.jakariatanjim.workers.dev-F38020?style=for-the-badge&logo=cloudflare&logoColor=white)](https://shinobicodex.jakariatanjim.workers.dev/)
 
 [![Build](https://github.com/jakariatanjim-svg/shinobi-codex/actions/workflows/build.yml/badge.svg)](https://github.com/jakariatanjim-svg/shinobi-codex/actions/workflows/build.yml)
-[![Version](https://img.shields.io/badge/version-3.7-red)](RELEASE_NOTES.md)
+[![Version](https://img.shields.io/badge/version-3.8-red)](RELEASE_NOTES.md)
 [![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=white)](https://react.dev)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.9-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org)
 [![Vite](https://img.shields.io/badge/Vite-7-646CFF?logo=vite&logoColor=white)](https://vite.dev)
@@ -52,6 +52,7 @@ power growth from academy dropout to god-tier.
 - **Dattebayo API client** — batched concurrent fetching (4×) with request timeouts
 - **IndexedDB offline cache** — versioned snapshots (`codex-v3.5`), stale-after-12h invalidation
 - **Two Blue Vortex merge** — TBV canon characters & enrichments folded into one dataset
+- **Official databook stats (v3.8)** — Chakra Index computed live from the printed official databooks (Rin/Sha/Tō no Sho) via the MediaWiki API — no hardcoded scores, green OFFICIAL badge when coverage exists
 - **Multi-source image engine** — era-matched artwork with verified fallbacks (Part I → Two Blue Vortex)
 - **Rank precedence** — Kage → Jōnin → Chūnin → Genin → Academy Student
 
@@ -95,7 +96,7 @@ The site is hosted on **Cloudflare Workers** and deployed **manually** by upload
 | Option | How |
 | ------ | --- |
 | **Local build** | Run `build.bat` (Windows) or `npm ci && npm run build` → upload `dist/` to Cloudflare |
-| **GitHub Actions** | Builds automatically on every push → creates a **GitHub Release** with the file attached as `shinobi-codex-v3.7-build-XX.html` — no zip, clearly named by app + version + build number |
+| **GitHub Actions** | Builds automatically on every push → creates a **GitHub Release** with the file attached as `shinobi-codex-v3.8-build-XX.html` — no zip, clearly named by app + version + build number |
 
 ### 🐙 Set up GitHub Actions (one-time)
 
@@ -121,9 +122,9 @@ src/
 ├── components/      # CharactersView, CharacterDetail, VersionsView, ClansView,
 │                    # CollectiveViews, CompareView, Dashboard, CharacterCard,
 │                    # TopBar, LoadingScreen, ui primitives
-├── hooks/           # useDatabook — dataset loading, TBV merge & gallery pipeline
-├── lib/             # api (Dattebayo client + IndexedDB cache), versions,
-│                    # tbvData, fallbackImages, eras, imageSources, ranks,
+├── hooks/           # useDatabook (data pipeline), useOfficialStats (official databooks)
+├── lib/             # api (Dattebayo client + IndexedDB cache), officialStats,
+│                    # versions, tbvData, fallbackImages, eras, imageSources, ranks,
 │                    # filters, query, derive, nav, actions, types,
 │                    # useHorizontalScroll
 ├── utils/           # cn() classname helper
@@ -131,7 +132,7 @@ src/
 ├── main.tsx         # entry point
 └── index.css        # Tailwind + theme
 build.bat            # one-click local build (Windows)
-RELEASE_NOTES.md     # latest release (v3.7) update info
+RELEASE_NOTES.md     # latest release (v3.8) update info
 ```
 
 ## 🙏 Credits
