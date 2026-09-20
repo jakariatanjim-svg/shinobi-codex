@@ -1,4 +1,4 @@
-/* Shinobi Codex v3.8 — top navigation, global search, random picker & sync state */
+/* Shinobi Codex v3.9 — top navigation, global search, random picker & sync state */
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { VIEWS, type ViewId } from "../lib/nav";
@@ -135,7 +135,7 @@ export function TopBar({
                 Shinobi Codex
               </span>
               <span className="block text-[0.62rem] uppercase tracking-[0.34em] text-slate-500">
-                Naruto & Two Blue Vortex · v3.8
+                Naruto & Two Blue Vortex · v3.9
               </span>
             </span>
           </button>

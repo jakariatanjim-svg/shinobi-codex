@@ -10,7 +10,7 @@ Academy days of Part I to the current **Two Blue Vortex** era of Boruto.
 [![Live Demo](https://img.shields.io/badge/🍥_LIVE-shinobicodex.jakariatanjim.workers.dev-F38020?style=for-the-badge&logo=cloudflare&logoColor=white)](https://shinobicodex.jakariatanjim.workers.dev/)
 
 [![Build](https://github.com/jakariatanjim-svg/shinobi-codex/actions/workflows/build.yml/badge.svg)](https://github.com/jakariatanjim-svg/shinobi-codex/actions/workflows/build.yml)
-[![Version](https://img.shields.io/badge/version-3.8-red)](RELEASE_NOTES.md)
+[![Version](https://img.shields.io/badge/version-3.9-red)](RELEASE_NOTES.md)
 [![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=white)](https://react.dev)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.9-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org)
 [![Vite](https://img.shields.io/badge/Vite-7-646CFF?logo=vite&logoColor=white)](https://vite.dev)
@@ -96,7 +96,7 @@ The site is hosted on **Cloudflare Workers** and deployed **manually** by upload
 | Option | How |
 | ------ | --- |
 | **Local build** | Run `build.bat` (Windows) or `npm ci && npm run build` → upload `dist/` to Cloudflare |
-| **GitHub Actions** | Builds automatically on every push → creates a **GitHub Release** with the file attached as `shinobi-codex-v3.8-build-XX.html` — no zip, clearly named by app + version + build number |
+| **GitHub Actions** | Builds automatically on every push → creates a **GitHub Release** with the file attached as plain `index.html` — standard web entry name, ready to upload to Cloudflare Workers (no zip, no rename) |
 
 ### 🐙 Set up GitHub Actions (one-time)
 
@@ -109,10 +109,10 @@ GitHub does **not** let you upload files into `.github/workflows/` directly, so 
 5. **Commit changes** → done
 
 ✅ **Result:** every push to `main` automatically builds and creates a **GitHub Release** with
-the built file attached as **`shinobi-codex-v{version}-build-{build}.html`** (no zip extraction).
-The version is pulled automatically from `RELEASE_NOTES.md`'s `vX.Y` line, the app name comes from
-the repository name (so the same code works unchanged in every project), and GitHub appends the
-auto-generated commit changelog below it. Just download and upload to Cloudflare.
+the built file attached as **`index.html`** (no zip extraction).
+The version is pulled automatically from `RELEASE_NOTES.md`'s `vX.Y` line, and GitHub appends the
+auto-generated commit changelog below it. Just download and upload to Cloudflare — the file keeps
+the standard web entry name, so it works without any renaming.
 
 ## 📁 Project Structure
 
@@ -132,7 +132,7 @@ src/
 ├── main.tsx         # entry point
 └── index.css        # Tailwind + theme
 build.bat            # one-click local build (Windows)
-RELEASE_NOTES.md     # latest release (v3.8) update info
+RELEASE_NOTES.md     # latest release (v3.9) update info
 ```
 
 ## 🙏 Credits

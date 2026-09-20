@@ -60,7 +60,7 @@ export interface Databook {
 const INITIAL_STATE: LoadState = {
   phase: "idle",
   progress: 0,
-  message: "Opening the Hokage's databook v3.8…",
+  message: "Opening the Hokage's databook v3.9…",
   fromCache: false,
   error: null,
   counts: {
@@ -83,7 +83,7 @@ export function useDatabook(): Databook {
   const run = useCallback(async (force: boolean) => {
     if (force) {
       setData(EMPTY_DATASET);
-      setState({ ...INITIAL_STATE, phase: "fetching", message: "Re-summoning the databook v3.8…" });
+      setState({ ...INITIAL_STATE, phase: "fetching", message: "Re-summoning the databook v3.9…" });
     }
     setState((prev) => ({ ...prev, phase: "fetching", error: null }));
     try {
@@ -96,7 +96,7 @@ export function useDatabook(): Databook {
         },
       });
       setData(dataset);
-      setState((prev) => ({ ...prev, phase: "ready", progress: 1, message: "Databook v3.8 online", fromCache: false }));
+      setState((prev) => ({ ...prev, phase: "ready", progress: 1, message: "Databook v3.9 online", fromCache: false }));
     } catch (err) {
       setState((prev) => ({
         ...prev,
