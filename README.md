@@ -95,7 +95,7 @@ The site is hosted on **Cloudflare Workers** and deployed **manually** by upload
 | Option | How |
 | ------ | --- |
 | **Local build** | Run `build.bat` (Windows) or `npm ci && npm run build` → upload `dist/` to Cloudflare |
-| **GitHub Actions** | Builds automatically on every push → creates a **GitHub Release** with `index.html` attached (no zip) — version auto-read from `RELEASE_NOTES.md` |
+| **GitHub Actions** | Builds automatically on every push → creates a **GitHub Release** with the file attached as `shinobi-codex-v3.7-build-XX.html` — no zip, clearly named by app + version + build number |
 
 ### 🐙 Set up GitHub Actions (one-time)
 
@@ -108,9 +108,10 @@ GitHub does **not** let you upload files into `.github/workflows/` directly, so 
 5. **Commit changes** → done
 
 ✅ **Result:** every push to `main` automatically builds and creates a **GitHub Release** with
-`dist/index.html` attached directly (no zip extraction).
-The release version is pulled automatically from `RELEASE_NOTES.md`'s `vX.Y` line, and GitHub
-append's the auto-generated PR/commit changelog below it. Just download and upload to Cloudflare.
+the built file attached as **`shinobi-codex-v{version}-build-{build}.html`** (no zip extraction).
+The version is pulled automatically from `RELEASE_NOTES.md`'s `vX.Y` line, the app name comes from
+the repository name (so the same code works unchanged in every project), and GitHub appends the
+auto-generated commit changelog below it. Just download and upload to Cloudflare.
 
 ## 📁 Project Structure
 
