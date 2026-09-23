@@ -26,6 +26,7 @@ jobs:
               || echo "unknown")
           fi
           echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+          echo "zip_name=${{ github.event.repository.name }}-${VERSION}-pages.zip" >> "$GITHUB_OUTPUT"
           echo "release_name=Shinobi Codex ${VERSION} — Build #${{ github.run_number }}" >> "$GITHUB_OUTPUT"
 
       - name: Setup Node.js
@@ -37,8 +38,16 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build (Vite - single-file bundle)
+      - name: Build
         run: npm run build
+
+      - name: Package dist for Cloudflare Pages
+        shell: bash
+        run: |
+          cd dist
+          zip -r "../${{ steps.ver.outputs.zip_name }}" . -x '.*'
+          cd ..
+          unzip -l "${{ steps.ver.outputs.zip_name }}"
 
       - name: Create Release
         uses: softprops/action-gh-release@v2
@@ -49,11 +58,17 @@ jobs:
           body: |
             ## ✦ ${{ steps.ver.outputs.version }}
 
-            Download **index.html** below and upload it to Cloudflare Workers.
+            **Cloudflare Pages deploy:** download **${{ steps.ver.outputs.zip_name }}** and drag it
+            into Cloudflare Pages → *Create/Upload assets*. The archive contains the `dist` output
+            directly (index.html, _redirects, _headers, manifest, icon), so no folder nesting.
+
+            **Single-file preview:** `index.html` is also attached for quick local viewing.
 
             - **Version:** ${{ steps.ver.outputs.version }} (from RELEASE_NOTES.md)
             - **Run:** [#${{ github.run_number }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
             - **Commit:** ${{ github.sha }} — `${{ github.event.head_commit.message }}`
-          files: dist/index.html
+          files: |
+            ${{ steps.ver.outputs.zip_name }}
+            dist/index.html
           draft: false
           prerelease: false
