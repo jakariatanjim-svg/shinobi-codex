@@ -383,6 +383,67 @@ img[decoding="async"] {
   image-rendering: -webkit-optimize-contrast;
 }
 
+/* ------------------------------------------------------------------ */
+/* v4.0 — GPU acceleration & compositing layer                         */
+/* ------------------------------------------------------------------ */
+
+/* Promote animated/blurred surfaces to their own GPU layer so scrolling and
+   hover effects never repaint on the CPU. */
+.aurora,
+.codex-shell::before,
+.seal-ring,
+.seal-ring-reverse,
+.shimmer-line {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  will-change: transform, opacity;
+}
+
+/* Cards: hint the compositor before hover so the lift is jank-free, and
+   isolate paint work to the card itself. */
+.shinobi-card {
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+  contain: paint style;
+}
+
+.shinobi-card:hover {
+  transform: translate3d(0, -6px, 0);
+}
+
+/* Scroll containers get momentum + GPU-backed overflow on mobile Safari. */
+.scroll-rail,
+.overflow-y-auto,
+.overflow-x-auto {
+  -webkit-overflow-scrolling: touch;
+  transform: translateZ(0);
+}
+
+/* Glass surfaces are expensive — keep their backdrop work on the GPU. */
+.glass,
+.glass-soft {
+  transform: translateZ(0);
+  will-change: backdrop-filter;
+}
+
+/* Images fade in on the compositor rather than triggering layout. */
+img {
+  backface-visibility: hidden;
+}
+
+/* Long lists: skip rendering off-screen rows entirely. */
+.gpu-list > * {
+  content-visibility: auto;
+  contain-intrinsic-size: 320px;
+}
+
+/* Utility for any element that should be composited explicitly. */
+.gpu {
+  transform: translateZ(0);
+  will-change: transform;
+  backface-visibility: hidden;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -391,5 +452,13 @@ img[decoding="async"] {
     animation-iteration-count: 1 !important;
     transition-duration: 0.001ms !important;
     scroll-behavior: auto !important;
+  }
+
+  /* Drop the compositor hints too — nothing is animating. */
+  .aurora,
+  .glass,
+  .glass-soft,
+  .shinobi-card {
+    will-change: auto;
   }
 }

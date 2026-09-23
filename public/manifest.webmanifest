@@ -1,0 +1,19 @@
+{
+  "name": "Shinobi Codex — Naruto, Shippūden & Boruto Databook",
+  "short_name": "Shinobi Codex",
+  "description": "Naruto, Naruto Shippūden and Boruto: Two Blue Vortex character databook with official databook stats, clans, villages and era timelines.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#05070b",
+  "theme_color": "#ff9d3d",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

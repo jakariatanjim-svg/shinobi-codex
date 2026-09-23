@@ -10,7 +10,7 @@ Academy days of Part I to the current **Two Blue Vortex** era of Boruto.
 [![Live Demo](https://img.shields.io/badge/🍥_LIVE-shinobicodex.jakariatanjim.workers.dev-F38020?style=for-the-badge&logo=cloudflare&logoColor=white)](https://shinobicodex.jakariatanjim.workers.dev/)
 
 [![Build](https://github.com/jakariatanjim-svg/shinobi-codex/actions/workflows/build.yml/badge.svg)](https://github.com/jakariatanjim-svg/shinobi-codex/actions/workflows/build.yml)
-[![Version](https://img.shields.io/badge/version-3.9-red)](RELEASE_NOTES.md)
+[![Version](https://img.shields.io/badge/version-4.0-red)](RELEASE_NOTES.md)
 [![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=white)](https://react.dev)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.9-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org)
 [![Vite](https://img.shields.io/badge/Vite-7-646CFF?logo=vite&logoColor=white)](https://vite.dev)
@@ -64,8 +64,9 @@ power growth from academy dropout to god-tier.
 | Styling | Tailwind CSS 4 (`@tailwindcss/vite`) |
 | Build | Vite 7 + `vite-plugin-singlefile` |
 | Data | Dattebayo API — characters, clans, villages, teams & more |
+| Routing | History API — clean slash URLs (`/clans`, `/shinobi/1344`) |
 | Storage | IndexedDB offline cache |
-| Hosting | Cloudflare Workers (static assets) |
+| Hosting | Cloudflare Pages (multi-file `dist/` + `_redirects` SPA fallback) |
 | CI | GitHub Actions — build & artifact (see [setup guide](GITHUB_WORKFLOW_SETUP.md)) |
 
 ## 🚀 Getting Started
@@ -88,15 +89,18 @@ npm run preview
 
 > **Windows:** double-click [`build.bat`](build.bat) for a one-click local production build.
 
-## ☁️ Deployment
+## ☁️ Deployment (Cloudflare Pages)
 
-The site is hosted on **Cloudflare Workers** and deployed **manually** by uploading the
-`dist/` build output.
+The site is hosted on **Cloudflare Pages** and deployed **manually** by uploading the
+`dist/` build output (which now includes `_redirects`, `_headers`, the manifest and icon).
 
 | Option | How |
 | ------ | --- |
-| **Local build** | Run `build.bat` (Windows) or `npm ci && npm run build` → upload `dist/` to Cloudflare |
-| **GitHub Actions** | Builds automatically on every push → creates a **GitHub Release** with the file attached as plain `index.html` — standard web entry name, ready to upload to Cloudflare Workers (no zip, no rename) |
+| **Local build** | Run `build.bat` (Windows) or `npm ci && npm run build` → upload the whole `dist/` folder to Pages |
+| **GitHub Actions** | Builds automatically on every push → attaches **`shinobi-codex-v{version}-pages.zip`** (the `dist` output, flat) to the Release — drag it straight into Cloudflare Pages. Plain `index.html` is attached too for quick previews. |
+
+> 🔗 **Clean URLs:** `public/_redirects` ships `/* /index.html 200`, so deep links like
+> `/shinobi/1344` work on direct load and hard refresh.
 
 ### 🐙 Set up GitHub Actions (one-time)
 
@@ -109,15 +113,16 @@ GitHub does **not** let you upload files into `.github/workflows/` directly, so 
 5. **Commit changes** → done
 
 ✅ **Result:** every push to `main` automatically builds and creates a **GitHub Release** with
-the built file attached as **`index.html`** (no zip extraction).
+the Pages-ready **`shinobi-codex-v{version}-pages.zip`** attached (plus a plain `index.html`).
 The version is pulled automatically from `RELEASE_NOTES.md`'s `vX.Y` line, and GitHub appends the
-auto-generated commit changelog below it. Just download and upload to Cloudflare — the file keeps
-the standard web entry name, so it works without any renaming.
+auto-generated commit changelog below it. Download the zip and drop it into Cloudflare Pages — the
+archive holds the `dist` output flat, so there is no folder nesting to fix.
 
 ## 📁 Project Structure
 
 ```
 GITHUB_WORKFLOW_SETUP.md  # GitHub Actions — copy-paste build setup
+public/              # _redirects, _headers, manifest.webmanifest, icon.svg, robots.txt
 src/
 ├── components/      # CharactersView, CharacterDetail, VersionsView, ClansView,
 │                    # CollectiveViews, CompareView, Dashboard, CharacterCard,
@@ -132,7 +137,7 @@ src/
 ├── main.tsx         # entry point
 └── index.css        # Tailwind + theme
 build.bat            # one-click local build (Windows)
-RELEASE_NOTES.md     # latest release (v3.9) update info
+RELEASE_NOTES.md     # latest release (v4.0) update info
 ```
 
 ## 🙏 Credits

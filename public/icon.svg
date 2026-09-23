@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="34%" r="78%">
+      <stop offset="0%" stop-color="#151d2e"/>
+      <stop offset="100%" stop-color="#05070b"/>
+    </radialGradient>
+    <linearGradient id="seal" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffb35c"/>
+      <stop offset="100%" stop-color="#f2760f"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="108" fill="url(#bg)"/>
+  <path d="M256 74l49 161 154 63-154 63-49 161-49-161L53 298l154-63z"
+        fill="none" stroke="url(#seal)" stroke-width="15" stroke-linejoin="round" opacity="0.92"/>
+  <circle cx="256" cy="298" r="34" fill="none" stroke="#38bdf8" stroke-width="11" opacity="0.72"/>
+  <text x="256" y="322" font-family="Segoe UI, system-ui, sans-serif" font-size="150" font-weight="700"
+        text-anchor="middle" fill="#fff6e8">忍</text>
+</svg>

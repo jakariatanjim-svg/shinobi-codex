@@ -1,4 +1,4 @@
-/* Shinobi Codex v3.9 — application shell (official stats + release patch) */
+/* Shinobi Codex v4.0 — application shell (Cloudflare Pages, slash URLs, GPU polish) */
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { LoadingScreen } from "./components/LoadingScreen";
@@ -13,7 +13,8 @@ import { VersionsView } from "./components/VersionsView";
 import { useDatabook } from "./hooks/useDatabook";
 import type { CodexActions } from "./lib/actions";
 import { EMPTY_FILTER, type CharacterFilter, type Dimension } from "./lib/filters";
-import { isViewId, type ViewId } from "./lib/nav";
+import { type ViewId } from "./lib/nav";
+import { currentRoute, hasLegacyHash, pushRoute, replaceRoute, type Route } from "./lib/router";
 import { runQuery } from "./lib/query";
 import { useHorizontalScroll } from "./lib/useHorizontalScroll";
 import type { Character } from "./lib/types";
@@ -33,31 +34,26 @@ export default function App() {
 
   const ready = data.characters.length > 0;
 
-  /* -------------------------------------------------------------- routing */
-  const applyHash = useCallback((hash: string) => {
-    const clean = hash.replace(/^#\/?/, "");
-    const parts = clean.split("/").filter(Boolean);
-    if (parts[0] === "shinobi" && parts[1]) {
-      const id = Number(parts[1]);
-      if (!Number.isNaN(id)) setOpenId(id);
-      return;
-    }
-    if (parts[0] && isViewId(parts[0])) {
-      setOpenId(null);
-      setView(parts[0]);
-    }
+  /* ------------------------------------------------- routing (v4.0 · slash URLs) */
+  const applyRoute = useCallback((route: Route) => {
+    setOpenId(route.characterId);
+    if (route.characterId === null) setView(route.view);
   }, []);
 
+  /* Boot: adopt the current URL and upgrade any legacy "#/..." link in place. */
   useEffect(() => {
-    applyHash(window.location.hash);
-    const onHash = () => applyHash(window.location.hash);
-    window.addEventListener("hashchange", onHash);
-    return () => window.removeEventListener("hashchange", onHash);
-  }, [applyHash]);
+    const route = currentRoute();
+    applyRoute(route);
+    if (hasLegacyHash()) replaceRoute(route);
 
+    const onPop = () => applyRoute(currentRoute());
+    window.addEventListener("popstate", onPop);
+    return () => window.removeEventListener("popstate", onPop);
+  }, [applyRoute]);
+
+  /* Keep the address bar in sync — real history entries, so Back/Forward work. */
   useEffect(() => {
-    const hash = openId === null ? `#/${view}` : `#/shinobi/${openId}`;
-    if (window.location.hash !== hash) window.history.replaceState(null, "", hash);
+    pushRoute({ view, characterId: openId });
   }, [view, openId]);
 
   useEffect(() => {
@@ -271,7 +267,7 @@ export default function App() {
       <footer className="mt-16 border-t border-white/6 py-8 text-center text-xs text-slate-500">
         <div className="mx-auto flex max-w-[1700px] flex-col items-center justify-between gap-3 px-4 sm:flex-row sm:px-6 lg:px-8">
           <p className="font-display uppercase tracking-[0.28em] text-slate-400">
-            Shinobi Codex · v3.9 — Naruto, Shippūden & Boruto: Two Blue Vortex Databook
+            Shinobi Codex · v4.0 — Naruto, Shippūden & Boruto: Two Blue Vortex Databook
           </p>
           <p className="text-[0.68rem] text-slate-600">
             Multi-Source Visual Archive (Fandom MediaWiki · AniList · Dattebayo) · Offline IndexedDB Cache
